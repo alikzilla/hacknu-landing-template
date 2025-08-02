@@ -284,9 +284,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 🔗 Links & Resources
 
 ### Project Links
-- **Live Demo**: [https://modern-landing.vercel.app](https://modern-landing.vercel.app)
-- **Repository**: [https://github.com/yourusername/Modern-Landing](https://github.com/yourusername/Modern-Landing)
-- **Issues**: [Report bugs or request features](https://github.com/yourusername/Modern-Landing/issues)
+- **Live Demo**: [https://admybrand-ai-saas.netlify.app/](https://admybrand-ai-saas.netlify.app/)
+- **Repository**: [https://github.com/Jaswanthk07/Modern-Saas-Landing](https://github.com/Jaswanthk07/Modern-Saas-Landing)
+- **Issues**: [Report bugs or request features](https://github.com/Jaswanthk07/Modern-Saas-Landing/issues)
 
 ### Documentation
 - **Component Documentation**: Detailed component API and usage examples
