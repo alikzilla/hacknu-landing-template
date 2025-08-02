@@ -1,0 +1,148 @@
+/* === Animations === */
+
+@keyframes neonPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4), 0 0 40px rgba(34, 197, 94, 0.2),
+      0 0 60px rgba(34, 197, 94, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.4),
+      0 0 90px rgba(34, 197, 94, 0.2);
+  }
+}
+
+@keyframes recommendedPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 40px rgba(59, 130, 246, 0.2), 0 0 60px rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6),
+      0 0 60px rgba(59, 130, 246, 0.4), 0 0 90px rgba(59, 130, 246, 0.2);
+  }
+}
+
+@keyframes priceFlicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    opacity: 0.3;
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes toggleBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* === 3D & Effects === */
+
+.card-3d {
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+  transition: all 0.1s ease-out;
+}
+
+.card-inner {
+  transform: translateZ(30px);
+  transition: transform 0.1s ease-out;
+}
+
+.card-glow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+/* === Neon Badges === */
+
+.popular-neon {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: 2px solid #22c55e;
+  animation: neonPulse 2s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.recommended-neon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: 2px solid #3b82f6;
+  animation: recommendedPulse 2s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+}
+
+/* === Blink Effects === */
+
+.price-blink {
+  animation: priceFlicker 0.3s ease-in-out;
+}
+
+.toggle-blink {
+  animation: toggleBlink 0.3s ease-in-out;
+}
+
+/* === Card Variants === */
+
+.popular-card {
+  border: 2px solid rgba(34, 197, 94, 0.3) !important;
+  position: relative;
+}
+
+.popular-card::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #22c55e, #16a34a, #15803d, #22c55e);
+  border-radius: inherit;
+  z-index: -1;
+  animation: neonPulse 3s ease-in-out infinite;
+}
+
+.recommended-card {
+  border: 2px solid rgba(59, 130, 246, 0.3) !important;
+  position: relative;
+}
+
+.recommended-card::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8, #1e40af, #3b82f6);
+  border-radius: inherit;
+  z-index: -1;
+  animation: recommendedPulse 3s ease-in-out infinite;
+}

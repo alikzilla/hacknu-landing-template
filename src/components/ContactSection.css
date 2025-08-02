@@ -1,0 +1,309 @@
+/* Cyber Night Green Theme Variables */
+:root {
+  --bg-color: #0a0f0d;
+  --accent-green: #22c55e;
+  --neon-green: #00ff9f;
+  --soft-glow: #39ff14;
+  --hover-blue: #06b6d4;
+  --text-color: #ffffff;
+}
+
+/* Contact Section Styles */
+.contact-section {
+  background: linear-gradient(135deg, var(--bg-color), #000000 60%, #0f0f0f);
+  color: var(--text-color);
+}
+
+/* Contact Method Buttons */
+.contact-method-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  background: rgba(0, 255, 159, 0.1);
+  border: 1px solid rgba(0, 255, 159, 0.3);
+  backdrop-filter: blur(10px);
+  gap: 0.75rem;
+}
+
+.contact-method-btn:hover {
+  background: rgba(0, 255, 159, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 255, 159, 0.3);
+}
+
+.contact-icon-wrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 255, 159, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Cyber Glow Effects */
+.cyber-glow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  bottom-radius: inherit;
+  background: linear-gradient(
+    45deg,
+    var(--accent-green),
+    var(--soft-glow),
+    var(--hover-blue)
+  );
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cyber-glow:hover::after {
+  opacity: 0.3;
+  animation: greenPulse 2s ease-in-out infinite;
+}
+
+@keyframes greenPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px var(--soft-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--accent-green);
+  }
+}
+
+/* Contact Form Card */
+.contact-form-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(34, 197, 53, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 255, 159, 0.2),
+    0 0 20px rgba(0, 255, 159, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Form Labels */
+.contact-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.4);
+  z-index: 10;
+}
+
+/* Contact Inputs */
+.contact-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(108, 128, 107, 0.6);
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.contact-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.contact-input:focus {
+  outline: none;
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 2px rgba(34, 197, 42, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Phone Input Group */
+.phone-input-group {
+  display: flex;
+  gap: 0;
+}
+
+/* Custom styling for the select dropdown */
+.country-select {
+  padding: 0.75rem;
+  border-radius: 0.75rem 0 0 0.75rem;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(108, 128, 107, 0.6);
+  border-right: none;
+  color: #22c55e;
+  backdrop-filter: blur(10px);
+  min-width: 4rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322c55e'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1em;
+}
+
+.phone-input {
+  border-radius: 0 0.75rem 0.75rem 0;
+  border-left: none;
+}
+
+/* Services Grid */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.service-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.service-checkbox:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.checkbox-input {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(108, 128, 107, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  accent-color: var(--accent-green);
+  cursor: pointer;
+}
+
+.checkbox-input:checked {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.checkbox-input:focus {
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--accent-green), var(--soft-glow));
+  border: 2px solid var(--accent-green);
+  box-shadow: 0 0 20px var(--soft-glow);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn:hover:not(:disabled) {
+  box-shadow: 0 0 30px var(--hover-blue), 0 10px 25px var(--accent-green);
+  transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submit-btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Holographic Gradient */
+.holographic {
+  background: linear-gradient(
+    45deg,
+    var(--accent-green),
+    var(--neon-green),
+    var(--hover-blue)
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: holographicShift 3s ease-in-out infinite;
+}
+
+@keyframes holographicShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-input-group {
+    flex-direction: column;
+  }
+
+  .country-select {
+    border-radius: 0.75rem;
+    border-right: 1px solid rgba(108, 128, 107, 0.6);
+    margin-bottom: 0.5rem;
+  }
+
+  .phone-input {
+    border-radius: 0.75rem;
+    border-left: 1px solid rgba(107, 128, 108, 0.6);
+    padding-left: 2.5rem;
+  }
+}

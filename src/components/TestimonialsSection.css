@@ -1,0 +1,64 @@
+/* TestimonialsSection.css */
+
+.testimonials-container {
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .testimonials-container .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .testimonials-container {
+    min-height: 350px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .testimonials-container .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .testimonials-container {
+    min-height: 450px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .testimonials-container .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Enhanced hover effects */
+.testimonials-container:hover {
+  cursor: grab;
+}
+
+.testimonials-container:active {
+  cursor: grabbing;
+}
+
+/* Smooth transitions for testimonial cards */
+.testimonials-container .testimonial-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Auto-play indicator styling */
+.testimonials-container + div {
+  margin-top: 1.5rem;
+}
+
+/* Animation performance optimization */
+.testimonials-container * {
+  will-change: transform, opacity;
+}
