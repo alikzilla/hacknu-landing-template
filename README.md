@@ -213,21 +213,6 @@ src/
 - Smooth transitions between states with backdrop blur
 - Mobile-responsive hamburger menu with slide animations
 
-## 🤖 AI-Powered Development Approach
-
-This project showcases modern AI-assisted development workflows:
-
-### AI Tools Integration
-- **ChatGPT-4o**: Architectural planning, animation strategies, and UX design decisions
-- **GitHub Copilot**: Rapid component scaffolding and TypeScript development
-- **v0.dev**: UI prototyping and responsive layout generation
-- **Cursor IDE**: Intelligent code suggestions and automated refactoring
-- **lovable.dev**: Design system optimization and accessibility improvements
-
-### Development Workflow Split
-- **65% AI-Generated**: Component scaffolding, base animations, responsive layouts
-- **35% Manual Refinement**: Performance optimization, animation fine-tuning, accessibility enhancements
-
 ### Custom Implementations
 - Manual GSAP timeline optimization for smooth cross-device performance
 - Custom Canvas particle system with advanced physics and performance controls
