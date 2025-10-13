@@ -1,88 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Crown, Rocket, Sparkle } from "phosphor-react";
-import "./PricingSection.css"; // External CSS file
+import "./PricingSection.css"; // можно оставить, если там базовые стили
 
 const PricingSection = () => {
   const [isYearly, setIsYearly] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
-  const cardRefs = useRef<HTMLDivElement[]>([]);
-
-  // 3D Tilt Effect
-  useEffect(() => {
-    const cards = cardRefs.current;
-
-    const handleMouseMove = (
-      e: MouseEvent,
-      card: HTMLDivElement,
-      index: number
-    ) => {
-      if (!card) return;
-
-      const rect = card.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const mouseX = e.clientX - centerX;
-      const mouseY = e.clientY - centerY;
-
-      const rotateX = (mouseY / rect.height) * -15;
-      const rotateY = (mouseX / rect.width) * 15;
-
-      card.style.transform = `
-        perspective(1000px) 
-        rotateX(${rotateX}deg) 
-        rotateY(${rotateY}deg) 
-        translateZ(20px)
-        scale3d(1.05, 1.05, 1.05)
-      `;
-      card.style.transition = "transform 0.1s ease-out";
-
-      const glowIntensity =
-        Math.min(Math.abs(mouseX) + Math.abs(mouseY), 100) / 100;
-      card.style.boxShadow = `
-        0 ${20 + glowIntensity * 20}px ${
-        40 + glowIntensity * 20
-      }px rgba(0, 0, 0, 0.3),
-        0 0 ${20 + glowIntensity * 30}px rgba(34, 197, 94, ${
-        0.2 + glowIntensity * 0.3
-      })
-      `;
-    };
-
-    const handleMouseLeave = (card: HTMLDivElement) => {
-      if (!card) return;
-
-      card.style.transform = `
-        perspective(1000px) 
-        rotateX(0deg) 
-        rotateY(0deg) 
-        translateZ(0px)
-        scale3d(1, 1, 1)
-      `;
-      card.style.transition = "transform 0.5s ease-out";
-      card.style.boxShadow = `
-        0 10px 30px rgba(0, 0, 0, 0.2),
-        0 0 20px rgba(34, 197, 94, 0.1)
-      `;
-    };
-
-    cards.forEach((card, index) => {
-      if (card) {
-        const mouseMoveHandler = (e: MouseEvent) =>
-          handleMouseMove(e, card, index);
-        const mouseLeaveHandler = () => handleMouseLeave(card);
-
-        card.addEventListener("mousemove", mouseMoveHandler);
-        card.addEventListener("mouseleave", mouseLeaveHandler);
-
-        return () => {
-          card.removeEventListener("mousemove", mouseMoveHandler);
-          card.removeEventListener("mouseleave", mouseLeaveHandler);
-        };
-      }
-    });
-  }, []);
 
   const plans = [
     {
@@ -151,17 +74,14 @@ const PricingSection = () => {
   ];
 
   const handleToggle = () => {
-    setIsToggling(true); // Apply flip animation
-
-    // Step 1: Wait for next frame before starting state change
+    setIsToggling(true);
     requestAnimationFrame(() => {
       setTimeout(() => {
-        setIsYearly((prev) => !prev); // Midpoint change
-      }, 300); // Mid-flip
-
+        setIsYearly((prev) => !prev);
+      }, 300);
       setTimeout(() => {
-        setIsToggling(false); // End of flip
-      }, 600); // End
+        setIsToggling(false);
+      }, 600);
     });
   };
 
@@ -171,23 +91,12 @@ const PricingSection = () => {
       <div className="absolute inset-0 particles opacity-10"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <motion.div
-            className="inline-flex items-center space-x-2 glass-card px-4 py-2 mb-6"
-            initial={{ scale: 0, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center space-x-2 glass-card px-4 py-2 mb-6">
             <Crown size={16} className="text-primary" weight="fill" />
             <span className="text-sm text-foreground/80">Choose Your Plan</span>
-          </motion.div>
+          </div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="text-foreground">Simple,</span>{" "}
@@ -208,19 +117,14 @@ const PricingSection = () => {
             >
               Monthly
             </span>
-            <motion.button
+            <button
               className={`relative w-16 h-8 glass-card rounded-full p-1 ${
                 isToggling ? "toggle-blink" : ""
               }`}
               onClick={handleToggle}
-              whileTap={{ scale: 0.95 }}
             >
-              <motion.div
-                className="w-6 h-6 bg-gradient-primary rounded-full shadow-lg"
-                animate={{ x: isYearly ? 24 : 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-            </motion.button>
+              <div className="w-6 h-6 bg-gradient-primary rounded-full shadow-lg" />
+            </button>
             <div className="flex items-center space-x-2">
               <span
                 className={`text-sm transition-all duration-300 ${
@@ -234,50 +138,31 @@ const PricingSection = () => {
               </span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Pricing Cards */}
+        {/* Cards */}
         <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {plans.map((plan, index) => (
-            <motion.div
+            <div
               key={plan.name}
-              ref={(el) => (cardRefs.current[index] = el!)}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              className={`relative group card-3d rounded-2xl
-    ${plan.popular || plan.recommended ? "md:-mt-4 md:mb-4" : ""}
-    ${isToggling ? "card-flip" : ""}
-  `}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className={`relative group rounded-2xl ${
+                plan.popular || plan.recommended ? "md:-mt-4 md:mb-4" : ""
+              }`}
             >
               {plan.popular && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10"
-                >
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                   <div className="popular-neon text-sm px-4 py-2 rounded-full text-white font-bold">
                     Most Popular
                   </div>
-                </motion.div>
+                </div>
               )}
 
               {plan.recommended && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10"
-                >
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                   <div className="recommended-neon text-sm px-4 py-2 rounded-full text-white font-bold">
                     Recommended
                   </div>
-                </motion.div>
+                </div>
               )}
 
               <div
@@ -287,29 +172,15 @@ const PricingSection = () => {
                     : plan.recommended
                     ? "recommended-card"
                     : ""
-                } ${isYearly ? "yearly-mode" : "monthly-mode"}
-                  ${plan.tier}-tier
-                `}
+                } ${isYearly ? "yearly-mode" : "monthly-mode"} ${
+                  plan.tier
+                }-tier`}
               >
-                <div
-                  className={`card-glow ${
-                    plan.popular
-                      ? "bg-gradient-to-br from-green-500/20 to-emerald-600/20"
-                      : plan.recommended
-                      ? "bg-gradient-to-br from-blue-500/20 to-indigo-600/20"
-                      : "bg-gradient-to-br from-gray-500/10 to-slate-600/10"
-                  }`}
-                ></div>
-
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${plan.gradient} opacity-0 group-hover:opacity-30 transition-opacity duration-300`}
                 ></div>
 
-                <div
-                  className={`relative z-10 card-inner transition-opacity duration-300 ${
-                    isToggling ? "opacity-0 pointer-events-none" : "opacity-100"
-                  }`}
-                >
+                <div className="relative z-10">
                   <div className="w-12 h-12 rounded-xl bg-gradient-primary/10 flex items-center justify-center mb-6">
                     <div className="text-primary text-2xl">{plan.icon}</div>
                   </div>
@@ -350,48 +221,36 @@ const PricingSection = () => {
                     ))}
                   </ul>
 
-                  <motion.button
-                    className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 transform hover:translateZ-10 ${
+                  <button
+                    className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 ${
                       plan.popular
                         ? "popular-neon"
                         : plan.recommended
                         ? "recommended-neon"
                         : "glass-card hover:bg-white/10 text-foreground"
                     }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{ transform: "translateZ(10px)" }}
                   >
                     {plan.popular
                       ? "Start Free Trial"
                       : plan.recommended
                       ? "Get Recommended"
                       : "Get Started"}
-                  </motion.button>
+                  </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-center mt-16"
-        >
+        {/* Footer */}
+        <div className="text-center mt-16">
           <p className="text-foreground/70 mb-4">
             Need a custom solution? We've got you covered.
           </p>
-          <motion.button
-            className="glass-card px-8 py-3 text-foreground hover:bg-white/10 transition-all duration-300 rounded-full"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <button className="glass-card px-8 py-3 text-foreground hover:bg-white/10 transition-all duration-300 rounded-full">
             Contact Sales
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
       </div>
     </section>
   );

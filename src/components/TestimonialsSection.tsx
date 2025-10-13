@@ -142,21 +142,6 @@ const TestimonialsSection = () => {
           </div>
         </div>
 
-        {/* Navigation Controls */}
-        {/* <div className="flex justify-center items-center space-x-8 mb-16">
-          <motion.button
-            onClick={() => setIsPaused(!isPaused)}
-            className="glass-card px-6 py-3 rounded-full hover:bg-white/10 transition-all duration-300 group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="text-foreground group-hover:text-primary transition-colors duration-300">
-              {isPaused ? "Resume" : "Pause"}
-            </span>
-          </motion.button>
-        </div> */}
-
-        {/* Stats */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}

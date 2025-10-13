@@ -18,7 +18,7 @@ const LandingPage = () => {
       <div className="relative min-h-screen bg-background">
         {/* Global Effects */}
         <CursorEffect />
-        <ParticleRain />
+        {/* <ParticleRain /> */}
 
         {/* Main Content */}
         <Navbar />

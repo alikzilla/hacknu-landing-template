@@ -81,54 +81,6 @@ const HeroSection = () => {
   const cityRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // City zoom animation
-      gsap.fromTo(
-        cityRef.current,
-        { scale: 1.2, y: 0 },
-        {
-          scale: 1,
-          y: -50,
-          duration: 2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "bottom center",
-            scrub: 1,
-          },
-        }
-      );
-
-      // Content fade in
-      gsap.fromTo(
-        contentRef.current?.children || [],
-        { y: 100, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.2,
-          ease: "power3.out",
-          delay: 0.5,
-        }
-      );
-
-      // Floating animation for elements
-      gsap.to(".floating", {
-        y: -20,
-        duration: 2,
-        ease: "power1.inOut",
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.3,
-      });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
-
   // Smooth scroll to features section
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById("features");
