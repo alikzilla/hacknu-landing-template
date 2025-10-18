@@ -96,7 +96,6 @@
     @apply bg-background text-foreground overflow-x-hidden;
     font-family: "Inter", system-ui, sans-serif;
     background: var(--gradient-hero);
-    cursor: none; /* Hide default cursor */
   }
 
   html {
@@ -203,18 +202,5 @@
     transform-style: preserve-3d;
     backface-visibility: hidden;
     will-change: transform, opacity, filter;
-  }
-
-  /* Custom Cursor Styles */
-  * {
-    cursor: none !important;
-  }
-
-  button,
-  a,
-  input,
-  textarea,
-  select {
-    cursor: none !important;
   }
 }

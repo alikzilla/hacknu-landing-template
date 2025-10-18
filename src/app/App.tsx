@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/shared/ui/sonner";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Chat from "@/pages/Chat";
 
 const Landing = lazy(() => import("../pages/Landing"));
 const NotFound = lazy(() => import("../pages/NotFound"));
@@ -21,6 +22,7 @@ const App = () => (
         >
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -14,14 +14,10 @@ const LandingPage = () => {
   return (
     <ErrorBoundary>
       <div className="relative min-h-screen bg-background">
-        {/* Global Effects */}
-        <CursorEffect />
-
         {/* Main Content */}
         <Navbar />
         <HeroSection />
-        {/* <FeaturesSection /> */}
-        {/* <TestimonialsSection /> */}
+        <FeaturesSection />
         <GoToChatSection />
         <FAQSection />
         <Footer />

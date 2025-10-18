@@ -1,204 +1,147 @@
 import { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { List, X } from "phosphor-react";
 import logo from "/public/logo.svg";
 
 const Navbar: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-
-  const { scrollY } = useScroll();
-
-  // Progressive glassmorphic effect - starts ONLY when scrolling
-  const glassOpacity = useTransform(
-    scrollY,
-    [0, 1, 80, 150],
-    [0, 0, 0.15, 0.3]
-  );
-  const borderOpacity = useTransform(
-    scrollY,
-    [0, 1, 80, 150],
-    [0, 0, 0.1, 0.2]
-  );
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = (): void => {
-      setIsScrolled(window.scrollY > 1); // Trigger immediately when scrolling starts
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 1);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const navItems = [
-    { name: "Features", href: "#features" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "Testimonials", href: "#testimonials" },
-    { name: "FAQ", href: "#faq" },
+    { name: "Возможности", href: "#features" },
+    { name: "Бот", href: "#bot" },
+    { name: "Вопросы", href: "#faq" },
   ];
 
-  // Smooth scroll function
-  const smoothScrollToTop = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const smoothScrollToTop = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Enhanced smooth scroll for nav items with better offset calculation
   const smoothScrollToSection = (
     e: React.MouseEvent<HTMLButtonElement>,
     href: string
-  ): void => {
+  ) => {
     e.preventDefault();
-    const targetId = href.replace("#", "");
-    const targetElement = document.getElementById(targetId);
-
-    if (targetElement) {
-      const navbarHeight = 80;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - navbarHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+    const id = href.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) {
+      const navbarHeight = 72;
+      const y =
+        el.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 12;
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
-
-    // Close mobile menu if open
     setIsMobileMenuOpen(false);
   };
 
   return (
     <motion.nav
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      style={{
-        backgroundColor: `rgba(0, 0, 0, ${glassOpacity.get()})`,
-        borderBottomColor: `rgba(255, 255, 255, ${borderOpacity.get()})`,
-      }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "backdrop-blur-xl shadow-lg shadow-black/25 border-b"
-          : "bg-transparent backdrop-blur-none shadow-none border-b border-transparent"
-      }`}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="fixed inset-x-0 top-3 z-50 pointer-events-none"
+      aria-label="Главная навигация"
     >
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo - Now Clickable */}
+      <motion.div
+        className={`pointer-events-auto mx-auto flex w-[82.5%] max-w-8xl items-center justify-between rounded-full border px-4 py-2 md:px-6 md:py-3 backdrop-blur-md transition-all ${
+          isScrolled ? "translate-y-0" : "translate-y-0"
+        }`}
+      >
+        {/* ЛОГО (кнопка наверх) */}
+        <motion.button
+          onClick={smoothScrollToTop}
+          className="flex items-center gap-3 rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400/60"
+          whileHover={{ scale: 1.04, rotate: 0.2 }}
+          whileTap={{ scale: 0.98 }}
+          type="button"
+          aria-label="Прокрутить вверх"
+          title="На главную"
+        >
+          <img src={logo} alt="Логотип" className="h-14 w-auto" />
+        </motion.button>
+
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex items-center gap-6">
+          {navItems.map((item) => (
+            <motion.button
+              key={item.name}
+              onClick={(e) => smoothScrollToSection(e, item.href)}
+              className="relative text-sm text-slate-800 hover:text-green-600 focus:outline-none"
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              aria-label={`Перейти к разделу: ${item.name}`}
+            >
+              {item.name}
+              <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-green-500 transition-all duration-300 group-hover:w-full" />
+            </motion.button>
+          ))}
+        </div>
+
+        {/* CTA DESKTOP */}
+        <div className="hidden md:flex items-center gap-3">
           <motion.button
-            onClick={smoothScrollToTop}
-            className="flex items-center space-x-3 cursor-pointer group focus:outline-none"
-            whileHover={{ scale: 1.05 }}
+            className="rounded-full bg-green-500 px-5 py-2 text-sm font-medium text-white shadow-[0_10px_20px_-10px_rgba(34,197,94,0.6)] transition hover:bg-green-600"
+            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 300 }}
             type="button"
           >
-            <motion.div
-              className="flex items-center justify-center transition-all duration-300"
-              whileHover={{ rotate: [0, -5, 5, 0] }}
-              transition={{ duration: 0.5 }}
-            >
-              <img src={logo} alt="Logo" />
-            </motion.div>
+            Начать бесплатно
           </motion.button>
+        </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+        {/* MOBILE TOGGLE */}
+        <motion.button
+          className="md:hidden rounded-full p-2 text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-400/60"
+          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          whileTap={{ scale: 0.95 }}
+          type="button"
+          aria-label="Переключить меню"
+          title="Меню"
+        >
+          {isMobileMenuOpen ? <X size={22} /> : <List size={22} />}
+        </motion.button>
+      </motion.div>
+
+      {/* MOBILE MENU */}
+      {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -6, height: 0 }}
+          animate={{ opacity: 1, y: 6, height: "auto" }}
+          exit={{ opacity: 0, y: -6, height: 0 }}
+          transition={{ duration: 0.25 }}
+          className="pointer-events-auto mx-auto mt-3 w-[92%] max-w-5xl rounded-3xl border border-slate-900/10 bg-white/75 p-3 backdrop-blur-md shadow-lg"
+          style={{ boxShadow: "0 16px 40px -16px rgba(0,0,0,0.18)" }}
+          aria-label="Мобильное меню"
+        >
+          <div className="flex flex-col gap-1">
             {navItems.map((item) => (
               <motion.button
                 key={item.name}
                 onClick={(e) => smoothScrollToSection(e, item.href)}
-                className="text-black hover:text-green-400 transition-colors duration-200 relative group cursor-pointer focus:outline-none"
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                className="w-full rounded-xl px-4 py-3 text-left text-slate-800 hover:bg-slate-900/5 focus:outline-none"
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.99 }}
                 type="button"
+                aria-label={`Перейти к разделу: ${item.name}`}
               >
                 {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-400 transition-all duration-300 group-hover:w-full"></span>
               </motion.button>
             ))}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <motion.button
-              className="text-black hover:text-green-400 transition-colors duration-200"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="button"
-            >
-              Sign In
-            </motion.button>
-            <motion.button
-              className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="button"
-            >
-              Start Free Trial
-            </motion.button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <motion.button
-            className="md:hidden text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <List size={24} />}
-          </motion.button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0, y: -10 }}
-            animate={{ opacity: 1, height: "auto", y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden mt-4 pb-4 border-t border-white/10"
-          >
-            <div className="mt-2 p-4 bg-black/40 backdrop-blur-xl border border-white/20 rounded-lg">
-              <div className="flex flex-col space-y-3">
-                {navItems.map((item) => (
-                  <motion.button
-                    key={item.name}
-                    onClick={(e) => smoothScrollToSection(e, item.href)}
-                    className="text-gray-300 hover:text-green-400 transition-colors duration-200 py-3 px-4 text-left cursor-pointer focus:outline-none rounded-lg hover:bg-white/10 font-medium"
-                    whileTap={{ scale: 0.98 }}
-                    whileHover={{ x: 5 }}
-                    type="button"
-                  >
-                    {item.name}
-                  </motion.button>
-                ))}
-                <div className="border-t border-white/10 pt-3 mt-2">
-                  <div className="flex flex-col space-y-3">
-                    <button
-                      className="text-gray-300 hover:text-green-400 transition-colors duration-200 py-2 px-4 text-left rounded-lg hover:bg-white/10"
-                      type="button"
-                    >
-                      Sign In
-                    </button>
-                    <button
-                      className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 text-center w-full"
-                      type="button"
-                    >
-                      Start Free Trial
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="mt-2 grid grid-cols-2 gap-8 border-t border-slate-900/10 pt-3">
+              <button className="rounded-full bg-green-500 px-4 py-2 text-white hover:bg-green-600">
+                Начать бесплатно
+              </button>
             </div>
-          </motion.div>
-        )}
-      </div>
+          </div>
+        </motion.div>
+      )}
     </motion.nav>
   );
 };

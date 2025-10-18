@@ -6,7 +6,7 @@ import { Play, Sparkle, Rocket } from "phosphor-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Custom Typing Effect Hook
+// Кастомный хук печати
 const useTypingEffect = (text: string, speed: number = 100) => {
   const [displayText, setDisplayText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -29,7 +29,7 @@ const useTypingEffect = (text: string, speed: number = 100) => {
   return { displayText, isComplete };
 };
 
-// Typing Text Component
+// Компонент печатаемого текста
 const TypingText = ({
   children,
   className = "",
@@ -80,37 +80,34 @@ const HeroSection = () => {
   const cityRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Smooth scroll to features section
+  // Плавный скролл к блоку фич
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById("features");
     if (featuresSection) {
       const offsetTop = featuresSection.offsetTop - 80;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: offsetTop, behavior: "smooth" });
     }
   };
 
   return (
     <section
       ref={heroRef}
-      id="home" // Added ID for navigation
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      id="home"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-[100px]"
     >
-      {/* City Background */}
+      {/* Фон города */}
       <div ref={cityRef} className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background"></div>
         <div className="absolute inset-0 cyber-grid opacity-30"></div>
         <div className="absolute inset-0 particles opacity-20"></div>
       </div>
 
-      {/* Hero Content */}
+      {/* Контент */}
       <div
         ref={contentRef}
         className="relative z-10 container mx-auto px-6 text-center"
       >
-        {/* Badge */}
+        {/* Бейдж */}
         <motion.div
           className="inline-flex items-center space-x-2 glass-card px-4 py-2 mb-8 floating"
           initial={{ scale: 0, opacity: 0 }}
@@ -118,12 +115,10 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <Sparkle size={16} className="text-primary" weight="fill" />
-          <span className="text-sm text-foreground/80">
-            Powered by Halal AI Technologies
-          </span>
+          <span className="text-sm text-foreground/80">На базе Halal AI</span>
         </motion.div>
 
-        {/* Main Headline with Typing Effect */}
+        {/* Заголовок с печатью */}
         <motion.h1
           className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
           initial={{ y: 50, opacity: 0 }}
@@ -131,27 +126,27 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <TypingText className="holographic" speed={150} delay={1000}>
-            AI-Powered
+            Халяльный ИИ
           </TypingText>
           <br />
           <TypingText className="text-foreground" speed={120} delay={2500}>
-            Financial helper
+            финансовый помощник
           </TypingText>
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Подзаголовок */}
         <motion.p
           className="text-xl md:text-2xl text-foreground/70 mb-8 max-w-3xl mx-auto leading-relaxed"
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
-          Transform your advertising with intelligent ad creation,
-          geo-targeting, and real-time campaign optimization powered by
-          cutting-edge AI.
+          Понятные шариат-совместимые планы без рибы: копим на квартиру/авто,
+          ведём бюджет, получаем ежедневные шаги и прозрачные вехи на пути к
+          цели.
         </motion.p>
 
-        {/* Stats */}
+        {/* Статы (примерные) */}
         <motion.div
           className="flex flex-wrap justify-center gap-8 mb-10"
           initial={{ y: 30, opacity: 0 }}
@@ -159,9 +154,9 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.9 }}
         >
           {[
-            { label: "AI Campaigns Created", value: "50K+" },
-            { label: "Average ROI Increase", value: "340%" },
-            { label: "Global Locations", value: "180+" },
+            { label: "Сгенерировано планов", value: "25K+" },
+            { label: "Средний рост сбережений", value: "↑ 28%" },
+            { label: "Регионов обслуживания", value: "20+" },
           ].map((stat, index) => (
             <div key={index} className="text-center floating">
               <div className="text-2xl md:text-3xl font-bold text-primary">
@@ -172,7 +167,7 @@ const HeroSection = () => {
           ))}
         </motion.div>
 
-        {/* CTA Buttons */}
+        {/* CTA-кнопки */}
         <motion.div
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
           initial={{ y: 30, opacity: 0 }}
@@ -186,12 +181,12 @@ const HeroSection = () => {
           >
             <span className="relative z-10 flex items-center space-x-2">
               <Rocket size={20} weight="fill" />
-              <span>Start Free Trial</span>
+              <span>Начать бесплатно</span>
             </span>
             <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </motion.button>
 
-          {/* Scroll Indicator - Enhanced with click functionality */}
+          {/* Индикатор скролла */}
           <motion.button
             onClick={scrollToFeatures}
             className="flex flex-col items-center space-y-2 mx-4 cursor-pointer group"
@@ -202,7 +197,7 @@ const HeroSection = () => {
             whileTap={{ scale: 0.95 }}
           >
             <span className="text-xs text-foreground/50 uppercase tracking-wide group-hover:text-primary/70 transition-colors duration-300">
-              Scroll to explore
+              Листайте ниже
             </span>
             <motion.div
               className="w-px h-8 bg-gradient-to-b from-primary to-transparent group-hover:from-primary/80 transition-colors duration-300"
@@ -218,7 +213,7 @@ const HeroSection = () => {
           >
             <span className="flex items-center space-x-2">
               <Play size={20} weight="fill" className="text-primary" />
-              <span>Watch Demo</span>
+              <span>Смотреть демо</span>
             </span>
           </motion.button>
         </motion.div>

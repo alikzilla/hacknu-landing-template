@@ -7,70 +7,86 @@ const FAQSection = () => {
 
   const faqs = [
     {
-      question: "How does ADmyBRAND's AI technology work?",
+      question: "Как работает ваш ИИ-чатбот и чем он поможет?",
       answer:
-        "Our AI technology uses advanced machine learning algorithms to analyze vast amounts of data including audience behavior, location demographics, foot traffic patterns, and campaign performance. It then automatically optimizes ad placement, targeting, and creative elements to maximize your ROI. The system continuously learns from each campaign to improve future performance.",
+        "Чатбот собирает базовые данные (доход, обязательные расходы, цель, срок) и строит персональный финансовый роудмэп: ежемесячные суммы, вехи, чек-листы действий. Он учитывает исламские принципы (без рибы) и предлагает халяль-решения, а также напоминает о шагах и отслеживает прогресс.",
     },
     {
-      question: "What makes your billboard advertising different?",
+      question: "Это исламский банк: как вы соблюдаете шариат-принципы?",
       answer:
-        "Unlike traditional billboard advertising, our AI-powered platform provides real-time optimization, precision targeting, and predictive analytics. We use geo-intelligence to identify optimal locations, audience analysis for perfect targeting, and automated campaign management to ensure maximum impact with minimal effort.",
+        "Мы не предлагаем продукты с рибой (процентами) и спекулятивными доходами. Используем модели халяль-финансирования (например, мурабаха, иджара, мушарака), включаем этический скрининг и консультируемся по вопросам соответствия нормам шариата.",
     },
     {
-      question: "Can I integrate ADmyBRAND with my existing marketing tools?",
+      question:
+        "Чем халяль-финансирование отличается от обычной «ипотеки под проценты»?",
       answer:
-        "Absolutely! ADmyBRAND offers comprehensive API access and integrations with popular marketing platforms including Google Analytics, Facebook Ads Manager, Salesforce, HubSpot, and many more. Our Growth and Enterprise plans include dedicated integration support.",
+        "В халяль-моделях банк не взимает проценты. Например, при мурабаха банк покупает недвижимость и продаёт её клиенту с прозрачной наценкой (маржой), фиксируя общую стоимость и график выплат. При иджара клиент арендует объект с последующим выкупом. Все условия оговариваются заранее.",
     },
     {
-      question: "How quickly can I see results from my campaigns?",
+      question:
+        "Как вы рассчитываете план накоплений на квартиру (например, 70 млн ₸)?",
       answer:
-        "Most clients see initial results within 24-48 hours of campaign launch. Our AI begins optimizing immediately upon deployment, and significant improvements in metrics like CTR and conversions typically appear within the first week. Full optimization and maximum ROI are usually achieved within 2-4 weeks.",
+        "Мы предлагаем безопасную норму сбережений от вашего дохода, считаем размер первоначального взноса (часто 20–30%), срок накопления и ежемесячную сумму. План адаптируется под вашу ситуацию: уже накопленные средства, желаемый срок, семейные расходы.",
     },
     {
-      question: "What kind of support do you provide?",
+      question: "Можно ли задать свой срок или сумму ежемесячных сбережений?",
       answer:
-        "We offer comprehensive support across all plans. Starter includes email support, Growth adds priority support and phone access, while Enterprise includes a dedicated account manager and 24/7 premium support. All plans include access to our knowledge base, video tutorials, and community forum.",
+        "Да. Вы можете зафиксировать желаемый срок—мы посчитаем требуемую сумму в месяц. Или, наоборот, задать сумму в месяц—мы оценим срок достижения цели. Чатбот предложит несколько сценариев.",
     },
     {
-      question: "Is there a free trial available?",
+      question: "Что такое «вехи» в роудмэпе и зачем они нужны?",
       answer:
-        "Yes! All plans come with a 14-day free trial that includes full access to our AI features, analytics dashboard, and campaign management tools. No credit card required to start, and you can upgrade or cancel anytime during the trial period.",
+        "Вехи—это этапы: финансовая подушка, накопление первоначального взноса, оформление сделки, переезд и т.д. Они дают понятную структуру, а чатбот подсказывает конкретные шаги на каждом этапе.",
     },
     {
-      question: "How do you ensure ad quality and brand safety?",
+      question: "Есть ли геймификация и мотивация?",
       answer:
-        "Our AI includes advanced brand safety filters and quality controls. We use content analysis to ensure ads meet platform standards, brand consistency checks to maintain your visual identity, and automated fraud detection to protect your investment. Enterprise plans include custom brand safety rules.",
+        "Да. За выполненные шаги вы получаете XP, поддерживаете «серию» (streak), открываете мини-награды. Это помогает не терять темп и доводить цель до результата.",
     },
     {
-      question: "Can I use ADmyBRAND for international campaigns?",
+      question: "Как план учитывает изменение дохода или рост цен?",
       answer:
-        "Yes! We support campaigns in 180+ countries with localized AI models that understand regional preferences, cultural nuances, and local regulations. Our global network includes premium billboard inventory worldwide with real-time availability and pricing.",
+        "В план заложены сценарии: падение дохода, рост стоимости жилья, изменение условий. При изменениях чатбот предложит корректировки: увеличить срок, скорректировать норму сбережений или пересобрать маршрут.",
+    },
+    {
+      question: "Какие документы понадобятся для халяль-финансирования жилья?",
+      answer:
+        "Как правило, нужны удостоверение личности, подтверждение доходов, документы по объекту и др. Точный список зависит от продукта (мурабаха/иджара и т.п.)—чатбот выдаст чек-лист под вашу ситуацию.",
+    },
+    {
+      question: "Бывает ли комиссионная нагрузка вместо процентов?",
+      answer:
+        "В халяль-моделях применяется прозрачная маржа и/или фиксированные сборы, сформулированные в договоре заранее. Мы показываем итоговую стоимость сделки, график и сумму выплат без скрытых начислений.",
+    },
+    {
+      question: "Можно ли досрочно погашать и как это оформляется?",
+      answer:
+        "Да, досрочное погашение возможно. Условия зависят от конкретного продукта и договора. Чатбот подскажет порядок действий и пересчитает оставшиеся платежи.",
+    },
+    {
+      question: "Как защищены мои данные и кто их видит?",
+      answer:
+        "Мы используем шифрование и политику минимально необходимого доступа. Ваши данные не передаются третьим лицам без вашего согласия. Вы можете запросить выгрузку или удаление данных в любой момент.",
+    },
+    {
+      question: "Поддерживаются ли русский и казахский языки?",
+      answer:
+        "Да, интерфейс и консультации доступны на русском и казахском. Мы продолжаем улучшать локализацию и финансовые справочники по регионам.",
+    },
+    {
+      question: "Есть ли бесплатный пробный период/демо?",
+      answer:
+        "Да, вы можете бесплатно попробовать генерацию плана и базовые подсказки. Расширенные функции и персональное сопровождение доступны в платных тарифах.",
+    },
+    {
+      question: "Как связаться со специалистом, если вопрос сложный?",
+      answer:
+        "В любой момент нажмите «Связаться с консультантом»—мы передадим ваш диалог сотруднику. Он увидит контекст и предложит решения, соответствующие исламским принципам и вашей ситуации.",
     },
   ];
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
-  };
-
-  // Function to scroll to contact section
-  const scrollToContact = () => {
-    const contactSection = document.getElementById("contact");
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // Function to open chatbot
-  const openChatbot = () => {
-    // Dispatch custom event to open chatbot
-    const chatbotEvent = new CustomEvent("openChatbot");
-    window.dispatchEvent(chatbotEvent);
-
-    // Alternative: If you have a global function to open chatbot
-    // window.openChatbot?.();
-
-    // Alternative: If you store chatbot state in a global variable
-    // window.chatbotOpen = true;
   };
 
   return (
@@ -96,17 +112,18 @@ const FAQSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Question size={16} className="text-primary" weight="fill" />
-            <span className="text-sm text-foreground/80">Got Questions?</span>
+            <span className="text-sm text-foreground/80">Есть вопросы?</span>
           </motion.div>
 
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="text-foreground">Frequently Asked</span>{" "}
-            <span className="holographic">Questions</span>
+            <span className="text-foreground">Частые</span>{" "}
+            <span className="holographic">вопросы</span>
           </h2>
 
           <p className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
-            Find answers to common questions about ADmyBRAND AI Suite. Can't
-            find what you're looking for? Our AI assistant is here to help!
+            Здесь вы найдёте ответы о нашем ИИ-ассистенте и
+            халяль-финансировании. Не нашли нужного? Напишите — ассистент
+            подскажет!
           </p>
         </motion.div>
 
@@ -154,7 +171,7 @@ const FAQSection = () => {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="glass-card mx-4 p-6 mt-2 border-t border-primary/20">
+                    <div className="glass-card mx-4 p-6 mt-2 mb-2 border-t border-primary/20">
                       <motion.p
                         initial={{ y: -10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
