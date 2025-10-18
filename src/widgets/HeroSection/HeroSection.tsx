@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Play, Sparkle, Rocket } from "phosphor-react";
+import { useNavigate } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,6 +77,7 @@ const TypingText = ({
 };
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -178,10 +180,11 @@ const HeroSection = () => {
             className="neon-btn group relative overflow-hidden"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/chat")}
           >
             <span className="relative z-10 flex items-center space-x-2">
               <Rocket size={20} weight="fill" />
-              <span>Начать бесплатно</span>
+              <span>Начать</span>
             </span>
             <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </motion.button>

@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
-import { FilePreview } from "../types";
+import { FilePreviewType } from "../types";
 
 export function useFileQueue() {
-  const [files, setFiles] = useState<FilePreview[]>([]);
+  const [files, setFiles] = useState<FilePreviewType[]>([]);
   const add = useCallback((list: FileList | File[]) => {
     const arr = Array.from(list).map((f) => ({
       id: crypto.randomUUID(),

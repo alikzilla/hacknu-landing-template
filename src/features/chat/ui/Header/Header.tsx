@@ -10,7 +10,6 @@ export const Header = ({
   const active = useThreadStore((s) =>
     s.threads.find((t) => t.id === s.activeId)
   );
-  const clear = useClearChat();
 
   return (
     <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/80 bg-white/95 px-3 md:px-4 py-2 md:py-3 backdrop-blur supports-[backdrop-filter]:bg-white/70">
@@ -32,13 +31,6 @@ export const Header = ({
           </div>
         </div>
       </div>
-
-      <button
-        className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
-        onClick={clear}
-      >
-        Очистить
-      </button>
     </div>
   );
 };

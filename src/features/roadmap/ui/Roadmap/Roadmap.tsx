@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Plus, ArrowRight } from "lucide-react";
 import { sampleBranching, sampleLinear } from "@/pages/Roadmap";
 import {
   calcPath,
   clamp,
-  formatPercent,
   buildSuggestions,
   NODE_WIDTH,
   computeLevels,
@@ -17,15 +15,7 @@ import {
   statusFromProgress,
   JourneyType,
 } from "../../model";
-import { NodeCard, ProgressSlider, RewardBadges } from "..";
-
-/**
- * Duolingo-Style Vertical Roadmap Renderer — FIXED
- * ------------------------------------------------------
- * - Single, unified state declaration for `journey` (bug fix)
- * - Clickable animated paths, progress via % slider, quick actions
- * - Two demo datasets (linear + branching) as "test cases"
- */
+import { NodeCard } from "..";
 
 export default function Roadmap({ data }: { data?: JourneyType }) {
   // ✅ Single source of truth (fix): only one declaration
@@ -175,7 +165,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
 
   return (
     <div
-      className="grid h-[100dvh] grid-cols-1 gap-0 md:grid-cols-[1fr_360px] bg-[var(--canvas-bg)]"
+      className="h-[100dvh] bg-[var(--canvas-bg)]"
       style={{
         background: `radial-gradient( circle at 20% 10%, rgba(16,185,129,0.06), transparent 50%), radial-gradient( circle at 80% 50%, rgba(245,158,11,0.06), transparent 50%), ${
           journey.theme?.colors?.bg || "#F8FAFC"
@@ -184,27 +174,6 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     >
       {/* Canvas */}
       <div className="relative overflow-auto">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white/70 px-5 py-3 backdrop-blur">
-          <div className="flex min-w-0 items-center gap-3">
-            <Sparkles className="h-5 w-5 text-emerald-600" />
-            <div className="min-w-0">
-              <h2 className="truncate font-semibold">{journey.title}</h2>
-              <p className="truncate text-xs text-slate-600">
-                {journey.description}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-xs text-slate-500">Общий прогресс</div>
-            <div className="text-sm font-semibold">
-              {formatPercent(
-                journey.progress?.overall_percent ??
-                  journey.goal?.progress_percent
-              )}
-            </div>
-          </div>
-        </div>
-
         <div className="relative mx-auto max-w-[1100px] px-8 py-10">
           {/* Layered canvas: edges behind (z-0), nodes above (z-10) */}
           <div
@@ -325,116 +294,6 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
                 })}
               </AnimatePresence>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* AI helper */}
-      <div className="border-l bg-white/80 backdrop-blur">
-        <div className="sticky top-0 z-10 border-b bg-white/80 px-5 py-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-emerald-600" />
-            <h3 className="font-semibold">AI-помощник</h3>
-          </div>
-          <p className="mt-1 text-xs text-slate-600">
-            Подбирает шаги и позволяет управлять прогрессом в %
-          </p>
-        </div>
-        <div className="space-y-4 p-5">
-          <div className="rounded-2xl border bg-white p-4 shadow-sm">
-            <div className="text-xs text-slate-500">Выбранный уровень</div>
-            <div className="mt-1 font-medium">
-              {suggestions.chosen_node_id || "—"}
-            </div>
-            {(() => {
-              const node = journey.nodes.find(
-                (n) => n.id === suggestions.chosen_node_id
-              );
-              if (!node) return null;
-              const val = node.progress?.percent ?? 0;
-              return (
-                <div className="mt-2">
-                  <ProgressSlider
-                    value={val}
-                    onChange={(next) =>
-                      handlePercent({ nodeId: node.id, nextPercent: next })
-                    }
-                  />
-                </div>
-              );
-            })()}
-            <div className="mt-3 text-xs text-slate-600">Подсказки:</div>
-            <ul className="mt-1 list-disc pl-5 text-sm text-slate-700">
-              {suggestions.messages.map((m, i) => (
-                <li key={i}>{m}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="rounded-2xl border bg-white p-4 shadow-sm">
-            <div className="mb-2 flex items-center gap-2 text-sm font-medium">
-              <Plus className="h-4 w-4 text-slate-400" /> Предложенные действия
-            </div>
-            <div className="grid gap-2">
-              {suggestions.suggested_actions.length ? (
-                suggestions.suggested_actions.map((a) => (
-                  <button
-                    key={a.id}
-                    onClick={() => {
-                      const nodeId = suggestions.chosen_node_id!;
-                      handleAction({ nodeId, amount: a.payload?.amount });
-                    }}
-                    className="inline-flex items-center justify-between rounded-xl border px-3 py-2 text-left text-sm hover:bg-emerald-50"
-                  >
-                    <span className="flex items-center gap-2">
-                      <ArrowRight className="h-4 w-4 text-slate-400" />
-                      {a.label}
-                    </span>
-                    <Sparkles className="h-4 w-4 text-emerald-500" />
-                  </button>
-                ))
-              ) : (
-                <div className="text-sm text-slate-500">
-                  Нет доступных действий
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="rounded-2xl border bg-white p-4 shadow-sm">
-            <div className="mb-2 text-sm font-medium">Доступные пути</div>
-            <div className="grid gap-2">
-              {(journey.connections || []).map((c) => {
-                const from = journey.nodes.find((n) => n.id === c.from);
-                const to = journey.nodes.find((n) => n.id === c.to);
-                if (!from || !to) return null;
-                const unlocked = (from.status || "locked") !== "locked";
-                return (
-                  <button
-                    key={c.id}
-                    onClick={() => setSelectedPath(c.id)}
-                    className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left text-sm ${
-                      selectedPath === c.id
-                        ? "bg-emerald-50 border-emerald-300"
-                        : "hover:bg-slate-50"
-                    }`}
-                  >
-                    <span className="truncate">
-                      {from.title} → {to.title}
-                    </span>
-                    <span
-                      className={`text-xs ${
-                        unlocked ? "text-emerald-600" : "text-slate-400"
-                      }`}
-                    >
-                      {unlocked ? "доступен" : "закрыт"}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div className="rounded-2xl border bg-white p-4 shadow-sm">
-            <div className="mb-2 text-sm font-medium">Награды</div>
-            <RewardBadges rewards={journey.rewards} />
           </div>
         </div>
       </div>

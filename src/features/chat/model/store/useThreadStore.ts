@@ -1,24 +1,24 @@
 import { create } from "zustand";
-import { Thread } from "../types";
+import { ThreadType } from "../types";
 
 type ThreadState = {
-  threads: Thread[];
+  threads: ThreadType[];
   activeId: string | null;
   setActive: (id: string) => void;
-  add: (t: Thread) => void;
-  updateMeta: (id: string, patch: Partial<Thread>) => void;
+  add: (t: ThreadType) => void;
+  updateMeta: (id: string, patch: Partial<ThreadType>) => void;
 };
 
 export const useThreadStore = create<ThreadState>((set) => ({
   threads: [
     {
-      id: "t1",
+      id: "1719e433-4215-4450-9a72-ae2ec5956224",
       title: "Цель: Квартира 70 млн ₸",
       lastMessage: "План на взнос готов",
       updatedAt: Date.now() - 120000,
     },
   ],
-  activeId: "t1",
+  activeId: "1719e433-4215-4450-9a72-ae2ec5956224",
   setActive: (id) => set({ activeId: id }),
   add: (t) => set((s) => ({ threads: [t, ...s.threads] })),
   updateMeta: (id, patch) =>

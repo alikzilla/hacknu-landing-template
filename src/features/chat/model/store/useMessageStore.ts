@@ -1,26 +1,51 @@
+// src/features/chat/model/store/useMessageStore.ts
 import { create } from "zustand";
-import { Message } from "../types";
+import { MessageType } from "../types";
 
-type MessageState = {
-  byThread: Record<string, Message[]>;
-  push: (threadId: string, msg: Message) => void;
-  clear: (threadId: string) => void;
+type State = {
+  byThread: Record<string, MessageType[]>;
 };
 
-export const useMessageStore = create<MessageState>((set) => ({
-  byThread: {
-    t1: [
-      {
-        id: "m1",
-        role: "assistant",
-        text: "Ассаляму алейкум! Какая цель и доход?",
-        time: "10:10",
-      },
-    ],
-  },
-  push: (id, msg) =>
+type Actions = {
+  push: (threadId: string, m: MessageType) => void;
+  setForThread: (threadId: string, list: MessageType[]) => void;
+  updateById: (
+    threadId: string,
+    id: string,
+    patch: Partial<MessageType>
+  ) => void;
+  removeById: (threadId: string, id: string) => void;
+};
+
+export const useMessageStore = create<State & Actions>()((set) => ({
+  byThread: {},
+
+  push: (threadId, m) =>
     set((s) => ({
-      byThread: { ...s.byThread, [id]: [...(s.byThread[id] ?? []), msg] },
+      byThread: {
+        ...s.byThread,
+        [threadId]: [...(s.byThread[threadId] ?? []), m],
+      },
     })),
-  clear: (id) => set((s) => ({ byThread: { ...s.byThread, [id]: [] } })),
+
+  setForThread: (threadId, list) =>
+    set((s) => ({ byThread: { ...s.byThread, [threadId]: list } })),
+
+  updateById: (threadId, id, patch) =>
+    set((s) => ({
+      byThread: {
+        ...s.byThread,
+        [threadId]: (s.byThread[threadId] ?? []).map((m) =>
+          m.id === id ? { ...m, ...patch } : m
+        ),
+      },
+    })),
+
+  removeById: (threadId, id) =>
+    set((s) => ({
+      byThread: {
+        ...s.byThread,
+        [threadId]: (s.byThread[threadId] ?? []).filter((m) => m.id !== id),
+      },
+    })),
 }));

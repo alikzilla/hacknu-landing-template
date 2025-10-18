@@ -1,11 +1,6 @@
+// src/features/chat/ui/Composer/Composer.tsx
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  useSendMessage,
-  useAssistantReply,
-  useFileQueue,
-  FilePreviewType,
-} from "../../model/";
 import {
   Paperclip,
   Microphone,
@@ -13,14 +8,15 @@ import {
   Trash,
   X,
 } from "phosphor-react";
+import { useFileQueue, FilePreviewType } from "../../model";
+import { useChatIO } from "../../model/hooks/useChatIo";
 
 export const Composer = () => {
   const [input, setInput] = useState("");
   const taRef = useRef<HTMLTextAreaElement>(null);
 
-  const send = useSendMessage();
-  const reply = useAssistantReply();
   const { files, add, clear, remove, onDrop } = useFileQueue();
+  const { send, sending, error } = useChatIO();
 
   const handlePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) add(e.target.files);
@@ -30,19 +26,15 @@ export const Composer = () => {
   const doSend = () => {
     const text = input.trim();
     if (!text && files.length === 0) return;
-    send(text, files.length ? (files as FilePreviewType[]) : undefined);
+    void send(text, files as FilePreviewType[]);
     setInput("");
     clear();
     taRef.current?.focus();
-    setTimeout(() => {
-      reply(
-        "Принял. Сгенерировал обновлённый план. Показать сценарии Мурабаха/Иджара?"
-      );
-    }, 600);
   };
 
   return (
     <>
+      {/* attachments bar */}
       <AnimatePresence>
         {files.length > 0 && (
           <motion.div
@@ -92,7 +84,7 @@ export const Composer = () => {
         )}
       </AnimatePresence>
 
-      {/* sticky bottom + safe-area */}
+      {/* sticky composer */}
       <div
         className="sticky bottom-0 border-t border-slate-200/80 bg-white"
         style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
@@ -103,7 +95,11 @@ export const Composer = () => {
           onDrop={onDrop}
         >
           {/* attach */}
-          <label className="flex h-10 w-10 md:h-10 md:w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-[0.98]">
+          <label
+            className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-[0.98] ${
+              sending ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
             <Paperclip size={18} />
             <input
               type="file"
@@ -114,14 +110,15 @@ export const Composer = () => {
           </label>
 
           {/* input */}
-          <div className="relative flex-1 flex items-center">
+          <div className="relative flex-1 flex items-center gap-2">
             <textarea
               ref={taRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               rows={1}
-              placeholder="Напишите сообщение…"
-              className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 md:px-4 py-2 pr-24 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-500 text-[15px]"
+              disabled={sending}
+              placeholder={sending ? "Отправка…" : "Напишите сообщение…"}
+              className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 md:px-4 py-2 pr-24 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-500 text-[15px] disabled:opacity-70"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -131,29 +128,61 @@ export const Composer = () => {
             />
 
             {/* right actions */}
-            <div className="pointer-events-auto flex items-center gap-1.5 md:right-2 md:bottom-2 md:gap-2">
+            <div className="pointer-events-auto flex items-center gap-1.5 md:gap-2">
               <button
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 active:scale-[0.98]"
+                disabled={sending}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50"
                 title="Голосовой ввод"
               >
                 <Microphone size={16} />
               </button>
               <button
                 onClick={doSend}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:scale-[0.98]"
+                disabled={sending}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50"
                 title="Отправить"
               >
-                <PaperPlaneTilt size={16} weight="bold" />
+                {sending ? (
+                  <LoaderDots small />
+                ) : (
+                  <PaperPlaneTilt size={16} weight="bold" />
+                )}
               </button>
             </div>
           </div>
         </div>
 
+        {/* helper row */}
         <div className="mx-auto max-w-3xl px-3 md:px-4 pb-2 text-[11px] text-slate-500">
-          Не присылайте конфиденциальные данные. Халяль-подход: без рибы,
-          прозрачно и этично.
+          {error ? (
+            <span className="text-red-600">
+              Ошибка: {error}.{" "}
+              <button onClick={doSend} className="underline">
+                Повторить
+              </button>
+            </span>
+          ) : (
+            <>
+              Не присылайте конфиденциальные данные. Халяль-подход: без рибы,
+              прозрачно и этично.
+            </>
+          )}
         </div>
       </div>
     </>
   );
 };
+
+/* tiny inline loader */
+function LoaderDots({ small }: { small?: boolean }) {
+  return (
+    <div
+      className={`inline-flex items-center gap-1 ${small ? "scale-90" : ""}`}
+      aria-label="Loading"
+    >
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white [animation-delay:-0.2s]" />
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white [animation-delay:-0.1s]" />
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white" />
+    </div>
+  );
+}

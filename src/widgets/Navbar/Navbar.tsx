@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { List, X } from "phosphor-react";
 import logo from "/public/logo.svg";
+import { useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -91,8 +93,9 @@ const Navbar: React.FC = () => {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.98 }}
             type="button"
+            onClick={() => navigate("/chat")}
           >
-            Начать бесплатно
+            Начать
           </motion.button>
         </div>
 
