@@ -5,9 +5,10 @@ import { TooltipProvider } from "@/shared/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const Landing = lazy(() => import("../pages/Landing"));
-const NotFound = lazy(() => import("../pages/NotFound"));
-const Chat = lazy(() => import("../pages/Chat"));
+const Landing = lazy(() => import("@/pages/Landing"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const Chat = lazy(() => import("@/pages/Chat"));
+const Roadmap = lazy(() => import("@/pages/Roadmap"));
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/roadmap" element={<Roadmap />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
