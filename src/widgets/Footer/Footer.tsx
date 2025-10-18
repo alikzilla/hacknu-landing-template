@@ -7,6 +7,7 @@ import {
   Phone,
   MapPin,
 } from "phosphor-react";
+import logo from "/public/logo.svg";
 
 const Footer = () => {
   const footerLinks = {
@@ -90,14 +91,8 @@ const Footer = () => {
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="mb-6">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-white border border-green-400 flex items-center justify-center transition-all duration-300">
-                  <img src="/favicon.ico" alt="Logo" className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-foreground">
-                    ADmyBRAND
-                  </h3>
-                  <p className="text-sm text-foreground/60">AI Suite</p>
+                <div className="flex items-center justify-center transition-all duration-300">
+                  <img src={logo} alt="Logo" />
                 </div>
               </div>
               <p className="text-foreground/70 leading-relaxed mb-6 text-sm sm:text-base">
@@ -174,7 +169,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/10 space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="text-foreground/60 text-sm order-2 md:order-1">
-            © 2024 ADmyBRAND AI Suite. All rights reserved.
+            © 2025 Zaman Bank - AI Financial helper. All rights reserved.
           </div>
 
           {/* Social Links */}

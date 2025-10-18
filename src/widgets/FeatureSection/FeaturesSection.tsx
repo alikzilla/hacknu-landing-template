@@ -127,7 +127,7 @@ const FeaturesSection: React.FC = () => {
       <motion.div
         className="flex gap-8"
         animate={{
-          x: [0, -1920], // Adjust based on card width
+          x: [0, -1400], // Adjust based on card width
         }}
         transition={{
           x: {

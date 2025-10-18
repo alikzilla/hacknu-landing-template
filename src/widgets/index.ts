@@ -14,6 +14,7 @@ import ParticleRain from "./ParticleRain/ParticleRain";
 import PricingSection from "./PricingSection/PricingSection";
 import TestimonialCard from "./TestimonialCard/TestimonialCard";
 import TestimonialsSection from "./TestimonialSection/TestimonialsSection";
+import GoToChatSection from "./GoToChatSection/GoToChatSection";
 
 export {
   AIChat,
@@ -32,4 +33,5 @@ export {
   PricingSection,
   TestimonialCard,
   TestimonialsSection,
+  GoToChatSection,
 };

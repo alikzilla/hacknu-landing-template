@@ -171,43 +171,6 @@ const FAQSection = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-center mt-16"
-        >
-          <div className="glass-card p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Still have questions?
-            </h3>
-            <p className="text-foreground/70 mb-6">
-              Our AI assistant and support team are ready to help you get
-              started with the perfect advertising solution for your business.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
-                className="neon-btn"
-                onClick={openChatbot}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Chat with AI Assistant
-              </motion.button>
-              <motion.button
-                className="glass-card px-8 py-4 text-foreground hover:bg-white/10 transition-all duration-300 rounded-full"
-                onClick={scrollToContact}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Support
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

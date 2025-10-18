@@ -1,16 +1,12 @@
 import {
   ErrorBoundary,
   CursorEffect,
-  ParticleRain,
   Navbar,
   HeroSection,
   FeaturesSection,
-  PricingSection,
-  ContactSection,
-  TestimonialsSection,
   FAQSection,
-  AIChat,
   Footer,
+  GoToChatSection,
 } from "@/widgets";
 import "@/shared/styles/smooth-scroll.css";
 
@@ -20,18 +16,15 @@ const LandingPage = () => {
       <div className="relative min-h-screen bg-background">
         {/* Global Effects */}
         <CursorEffect />
-        <ParticleRain />
 
         {/* Main Content */}
         <Navbar />
         <HeroSection />
-        <FeaturesSection />
-        <PricingSection />
-        <ContactSection />
-        <TestimonialsSection />
+        {/* <FeaturesSection /> */}
+        {/* <TestimonialsSection /> */}
+        <GoToChatSection />
         <FAQSection />
         <Footer />
-        <AIChat />
       </div>
     </ErrorBoundary>
   );

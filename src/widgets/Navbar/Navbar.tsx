@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Brain, List, X } from "phosphor-react";
+import { List, X } from "phosphor-react";
+import logo from "/public/logo.svg";
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -97,21 +98,12 @@ const Navbar: React.FC = () => {
             type="button"
           >
             <motion.div
-              className="w-10 h-10 rounded-lg bg-white border border-green-400 flex items-center justify-center transition-all duration-300"
+              className="flex items-center justify-center transition-all duration-300"
               whileHover={{ rotate: [0, -5, 5, 0] }}
               transition={{ duration: 0.5 }}
             >
-              <img src="/favicon.ico" alt="Logo" className="w-6 h-6" />
+              <img src={logo} alt="Logo" />
             </motion.div>
-
-            <div className="group-hover:scale-105 transition-transform duration-300">
-              <h1 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors duration-300">
-                ADmyBRAND
-              </h1>
-              <p className="text-xs text-gray-400 group-hover:text-green-400/70 transition-colors duration-300">
-                AI Suite
-              </p>
-            </div>
           </motion.button>
 
           {/* Desktop Navigation */}
@@ -120,7 +112,7 @@ const Navbar: React.FC = () => {
               <motion.button
                 key={item.name}
                 onClick={(e) => smoothScrollToSection(e, item.href)}
-                className="text-gray-300 hover:text-green-400 transition-colors duration-200 relative group cursor-pointer focus:outline-none"
+                className="text-black hover:text-green-400 transition-colors duration-200 relative group cursor-pointer focus:outline-none"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -135,7 +127,7 @@ const Navbar: React.FC = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <motion.button
-              className="text-gray-300 hover:text-green-400 transition-colors duration-200"
+              className="text-black hover:text-green-400 transition-colors duration-200"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="button"

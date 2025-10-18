@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Play, Sparkle, Rocket } from "phosphor-react";
-import citySkyline from "@/shared/assets/city-skyline.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -100,16 +99,7 @@ const HeroSection = () => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* City Background */}
-      <div
-        ref={cityRef}
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${citySkyline})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
+      <div ref={cityRef} className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background"></div>
         <div className="absolute inset-0 cyber-grid opacity-30"></div>
         <div className="absolute inset-0 particles opacity-20"></div>
@@ -129,7 +119,7 @@ const HeroSection = () => {
         >
           <Sparkle size={16} className="text-primary" weight="fill" />
           <span className="text-sm text-foreground/80">
-            Powered by Advanced AI Technology
+            Powered by Halal AI Technologies
           </span>
         </motion.div>
 
@@ -145,7 +135,7 @@ const HeroSection = () => {
           </TypingText>
           <br />
           <TypingText className="text-foreground" speed={120} delay={2500}>
-            Billboard Revolution
+            Financial helper
           </TypingText>
         </motion.h1>
 

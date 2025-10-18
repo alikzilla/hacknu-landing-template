@@ -56,7 +56,7 @@ const ContactSection = () => {
 
   return (
     <section
-      className="relative py-20 overflow-hidden contact-section"
+      className="bg-white relative py-20 overflow-hidden contact-section"
       id="contact"
     >
       <div className="absolute inset-0 cyber-grid opacity-20"></div>

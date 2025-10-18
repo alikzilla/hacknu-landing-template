@@ -2,118 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ADmyBRAND AI Suite - Futuristic Cyber Design System
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Cyber Color Palette */
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
+    /* 🎨 Основные цвета — светлая палитра */
+    --background: 0 0% 100%; /* Белый фон (Zaman Cloud) */
+    --foreground: 167 30% 25%; /* Текст — глубокий Persian Green */
 
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
+    --card: 0 0% 100%;
+    --card-foreground: 167 30% 25%;
 
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 167 30% 25%;
 
-    --primary: 150 100% 55%;
-    --primary-foreground: 0 0% 4%;
+    --primary: 167 57% 38%; /* Zaman Persian Green (#2D9A86) */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 55 98% 65%; /* Zaman Solar (#EEFE6D) */
+    --secondary-foreground: 167 30% 20%;
 
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 96%; /* Светло-серый фон для UI */
+    --muted-foreground: 167 25% 35%;
 
-    --accent: 195 100% 65%;
-    --accent-foreground: 0 0% 4%;
+    --accent: 55 98% 65%; /* Solar */
+    --accent-foreground: 167 30% 20%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 12%;
-    --ring: 150 100% 55%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 167 57% 38%;
 
-    /* Cyber-specific colors */
-    --cyber-green: 150 100% 55%;
-    --cyber-green-glow: 150 100% 45%;
-    --cyber-blue: 195 100% 65%;
-    --cyber-purple: 270 100% 75%;
-    --cyber-dark: 0 0% 4%;
-    --cyber-glass: 0 0% 100%;
+    /* 🌿 Zaman брендовые цвета */
+    --zaman-green: 167 57% 38%; /* Persian Green */
+    --zaman-solar: 55 98% 65%; /* Solar */
+    --zaman-cloud: 0 0% 100%; /* Cloud */
 
-    /* Glows and effects */
-    --glow-green: 0 0 20px hsl(150 100% 55% / 0.6);
-    --glow-blue: 0 0 20px hsl(195 100% 65% / 0.6);
-    --glow-purple: 0 0 20px hsl(270 100% 75% / 0.6);
+    /* ✨ Эффекты и свечения */
+    --glow-green: 0 0 15px hsl(167 57% 38% / 0.4);
+    --glow-yellow: 0 0 15px hsl(55 98% 65% / 0.5);
 
-    /* Glass morphism */
-    --glass-bg: hsl(0 0% 100% / 0.05);
-    --glass-border: hsl(0 0% 100% / 0.1);
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(150 100% 55%), hsl(195 100% 65%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 4%), hsl(0 0% 8%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+    /* 💎 Стеклянный эффект */
+    --glass-bg: hsl(0 0% 100% / 0.6);
+    --glass-border: hsl(0 0% 0% / 0.05);
+
+    /* 🌈 Градиенты */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(167 57% 38%),
+      hsl(55 98% 65%)
+    );
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%), hsl(55 98% 95%));
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(0 0% 100% / 0.8),
+      hsl(0 0% 100% / 0.6)
+    );
 
     --radius: 1rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* 🌙 Альтернатива — тёмная версия (акцентная) */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 160 20% 8%;
+    --foreground: 0 0% 100%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 160 20% 10%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --primary: 167 57% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 55 98% 65%;
+    --secondary-foreground: 160 20% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --accent: 55 98% 65%;
+    --accent-foreground: 160 20% 10%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 160 15% 15%;
+    --muted-foreground: 0 0% 85%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 160 15% 20%;
+    --ring: 167 57% 38%;
   }
 }
 
@@ -124,7 +94,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground overflow-x-hidden;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     background: var(--gradient-hero);
     cursor: none; /* Hide default cursor */
   }
@@ -154,15 +124,21 @@ All colors MUST be HSL.
 
   /* Cyber Grid Background */
   .cyber-grid {
-    background-image: 
-      linear-gradient(rgba(150, 255, 150, 0.03) 1px, transparent 1px),
+    background-image: linear-gradient(
+        rgba(150, 255, 150, 0.03) 1px,
+        transparent 1px
+      ),
       linear-gradient(90deg, rgba(150, 255, 150, 0.03) 1px, transparent 1px);
     background-size: 50px 50px;
   }
 
   /* Floating Particles */
   .particles {
-    background-image: radial-gradient(2px 2px at 20px 30px, hsl(var(--primary)), transparent),
+    background-image: radial-gradient(
+        2px 2px at 20px 30px,
+        hsl(var(--primary)),
+        transparent
+      ),
       radial-gradient(2px 2px at 40px 70px, hsl(var(--accent)), transparent),
       radial-gradient(1px 1px at 90px 40px, hsl(var(--primary)), transparent);
     background-repeat: repeat;
@@ -171,10 +147,18 @@ All colors MUST be HSL.
   }
 
   @keyframes float {
-    0% { transform: translateY(0px) translateX(0px) }
-    33% { transform: translateY(-10px) translateX(5px) }
-    66% { transform: translateY(5px) translateX(-5px) }
-    100% { transform: translateY(0px) translateX(0px) }
+    0% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    66% {
+      transform: translateY(5px) translateX(-5px);
+    }
+    100% {
+      transform: translateY(0px) translateX(0px);
+    }
   }
 
   /* Scroll Animations */
@@ -191,7 +175,12 @@ All colors MUST be HSL.
 
   /* Holographic Text Effect */
   .holographic {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--cyber-purple)));
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--cyber-purple))
+    );
     background-size: 200% 200%;
     background-clip: text;
     -webkit-background-clip: text;
@@ -200,8 +189,13 @@ All colors MUST be HSL.
   }
 
   @keyframes hologram {
-    0%, 100% { background-position: 0% 50% }
-    50% { background-position: 100% 50% }
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 
   /* Stage Effect for Feature Cards */
@@ -216,7 +210,11 @@ All colors MUST be HSL.
     cursor: none !important;
   }
 
-  button, a, input, textarea, select {
+  button,
+  a,
+  input,
+  textarea,
+  select {
     cursor: none !important;
   }
 }
