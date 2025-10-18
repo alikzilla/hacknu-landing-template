@@ -1,3 +1,11 @@
+import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  useSendMessage,
+  useAssistantReply,
+  useFileQueue,
+  FilePreviewType,
+} from "../../model/";
 import {
   Paperclip,
   Microphone,
@@ -5,14 +13,6 @@ import {
   Trash,
   X,
 } from "phosphor-react";
-import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { FilePreview } from "../../model";
-import { useFileQueue } from "../../model/hooks/useFileQueue";
-import {
-  useSendMessage,
-  useAssistantReply,
-} from "../../model/hooks/useSendMessage";
 
 export const Composer = () => {
   const [input, setInput] = useState("");
@@ -30,7 +30,7 @@ export const Composer = () => {
   const doSend = () => {
     const text = input.trim();
     if (!text && files.length === 0) return;
-    send(text, files.length ? (files as FilePreview[]) : undefined);
+    send(text, files.length ? (files as FilePreviewType[]) : undefined);
     setInput("");
     clear();
     taRef.current?.focus();
@@ -114,7 +114,7 @@ export const Composer = () => {
           </label>
 
           {/* input */}
-          <div className="relative flex-1 flex items-center gap-2">
+          <div className="relative flex-1 flex items-center">
             <textarea
               ref={taRef}
               value={input}

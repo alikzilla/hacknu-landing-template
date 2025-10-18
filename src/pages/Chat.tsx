@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { Composer } from "@/features/chat/ui/Composer/Composer";
-import { Header } from "@/features/chat/ui/Header/Header";
-import { Messages } from "@/features/chat/ui/Messages/Messages";
-import { Sidebar } from "@/features/chat/ui/Sidebar/Sidebar";
+import { Messages, Composer, Header, Sidebar } from "@/features/chat";
 
 const Chat = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);

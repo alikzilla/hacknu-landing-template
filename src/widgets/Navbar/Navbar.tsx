@@ -45,11 +45,11 @@ const Navbar: React.FC = () => {
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed inset-x-0 top-3 z-50 pointer-events-none"
+      className="w-full container lg:px-20 px-6 fixed inset-x-0 top-3 z-50 pointer-events-none"
       aria-label="Главная навигация"
     >
       <motion.div
-        className={`pointer-events-auto mx-auto flex w-[82.5%] max-w-8xl items-center justify-between rounded-full border px-4 py-2 md:px-6 md:py-3 backdrop-blur-md transition-all ${
+        className={`pointer-events-auto mx-auto flex items-center justify-between rounded-full border px-4 py-1 md:px-6 md:py-3 backdrop-blur-md transition-all ${
           isScrolled ? "translate-y-0" : "translate-y-0"
         }`}
       >
@@ -63,7 +63,7 @@ const Navbar: React.FC = () => {
           aria-label="Прокрутить вверх"
           title="На главную"
         >
-          <img src={logo} alt="Логотип" className="h-14 w-auto" />
+          <img src={logo} alt="Логотип" className="lg:h-14 h-10 w-auto" />
         </motion.button>
 
         {/* DESKTOP NAV */}

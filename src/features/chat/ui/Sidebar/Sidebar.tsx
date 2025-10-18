@@ -1,14 +1,9 @@
+import { useSelectThread, useStartNewChat, useThreadStore } from "../../model";
 import { DotsThree } from "phosphor-react";
-import { useSelectThread } from "../../model/hooks/useSelectThread";
-import { useStartNewChat } from "../../model/hooks/useStartNewChat";
-import { useThreadStore } from "../../model/store/useThreadStore";
+import { Link } from "react-router-dom";
 import logo from "/public/logo.svg";
 
-export const Sidebar = ({
-  onAfterSelect,
-}: {
-  onAfterSelect?: () => void; // вызовем на мобилке чтобы закрыть drawer
-}) => {
+export const Sidebar = ({ onAfterSelect }: { onAfterSelect?: () => void }) => {
   const threads = useThreadStore((s) => s.threads);
   const activeId = useThreadStore((s) => s.activeId);
   const onNew = useStartNewChat();
@@ -22,9 +17,9 @@ export const Sidebar = ({
   return (
     <div className="h-full flex flex-col">
       <div className="px-4 pt-4 pb-2">
-        <div className="flex items-center gap-3">
+        <Link to={"/"} className="flex items-center gap-3">
           <img src={logo} className="h-10 w-auto" alt="Zamanbank" />
-        </div>
+        </Link>
         <button
           className="mt-4 w-full rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-500/15"
           onClick={() => {

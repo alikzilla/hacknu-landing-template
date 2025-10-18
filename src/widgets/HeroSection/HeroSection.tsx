@@ -93,7 +93,7 @@ const HeroSection = () => {
     <section
       ref={heroRef}
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-[100px]"
+      className="w-full container lg:px-20 px-6 relative min-h-screen flex items-center justify-center overflow-hidden pt-[100px]"
     >
       {/* Фон города */}
       <div ref={cityRef} className="absolute inset-0 z-0">

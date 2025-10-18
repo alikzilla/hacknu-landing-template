@@ -1,5 +1,4 @@
-import { useClearChat } from "../../model/hooks/useClearChat";
-import { useThreadStore } from "../../model/store/useThreadStore";
+import { useClearChat, useThreadStore } from "../../model";
 import { List } from "phosphor-react";
 
 export const Header = ({

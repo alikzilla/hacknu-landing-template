@@ -1,9 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useMessageStore } from "../../model/store/useMessageStore";
-import { useThreadStore } from "../../model/store/useThreadStore";
-import { Message } from "../../model";
+import { useMessageStore, useThreadStore, MessageType } from "../../model";
 
-const Bubble = ({ m }: { m: Message }) => (
+const Bubble = ({ m }: { m: MessageType }) => (
   <div
     className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
   >

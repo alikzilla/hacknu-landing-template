@@ -1,6 +1,6 @@
 import { useMessageStore } from "../store/useMessageStore";
 import { useThreadStore } from "../store/useThreadStore";
-import { FilePreview } from "../types";
+import { FilePreviewType } from "../types";
 
 const now = () =>
   new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -10,7 +10,7 @@ export function useSendMessage() {
   const updateMeta = useThreadStore((s) => s.updateMeta);
   const push = useMessageStore((s) => s.push);
 
-  return (text: string, files?: FilePreview[]) => {
+  return (text: string, files?: FilePreviewType[]) => {
     if (!activeId) return;
     const msg = {
       id: crypto.randomUUID(),

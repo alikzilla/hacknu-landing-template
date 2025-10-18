@@ -10,7 +10,7 @@ const GoToChatSection = () => {
       whileInView={{ y: 0, opacity: 1 }}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
-      className="relative mx-auto max-w-5xl px-4 py-16 text-center"
+      className="relative container lg:px-20 px-6 py-16 text-center"
       aria-labelledby="cta-title"
       id="bot"
     >
@@ -21,7 +21,7 @@ const GoToChatSection = () => {
       </div>
 
       {/* Карточка */}
-      <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-green-600/20 bg-white/70 p-10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:bg-white/10">
+      <div className="relative mx-auto overflow-hidden rounded-3xl border border-green-600/20 bg-white/70 p-10 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:bg-white/10">
         {/* Мягкое «кольцо» по границе */}
         <div
           aria-hidden

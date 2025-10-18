@@ -95,7 +95,7 @@ const FAQSection = () => {
       <div className="absolute inset-0 cyber-grid opacity-20"></div>
       <div className="absolute inset-0 particles opacity-10"></div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container lg:px-20 px-6 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
@@ -128,7 +128,7 @@ const FAQSection = () => {
         </motion.div>
 
         {/* FAQ Accordion */}
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}

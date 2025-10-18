@@ -1,11 +1,11 @@
-export type Thread = {
+export type ThreadType = {
   id: string;
   title: string;
   lastMessage?: string;
   updatedAt: number;
 };
 
-export type FilePreview = {
+export type FilePreviewType = {
   id: string;
   name: string;
   size: number;
@@ -13,10 +13,10 @@ export type FilePreview = {
   url?: string;
 };
 
-export type Message = {
+export type MessageType = {
   id: string;
   role: "user" | "assistant" | "system";
   text: string;
-  files?: FilePreview[];
+  files?: FilePreviewType[];
   time: string;
 };
