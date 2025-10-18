@@ -1,5 +1,6 @@
 import { useClearChat, useThreadStore } from "../../model";
 import { List } from "phosphor-react";
+import ModelSelector from "../ModelSelector/ModelSelector";
 
 export const Header = ({
   onOpenSidebarMobile,
@@ -14,6 +15,8 @@ export const Header = ({
   return (
     <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/80 bg-white/95 px-3 md:px-4 py-2 md:py-3 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
+        <ModelSelector />
+
         {/* бургер только на мобилке */}
         <button
           className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50"
