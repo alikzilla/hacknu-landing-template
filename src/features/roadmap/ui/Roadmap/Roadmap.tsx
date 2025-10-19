@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+// src/features/roadmap/ui/Roadmap.tsx
+import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   calcPath,
@@ -23,6 +24,7 @@ const MAX_SCALE = 2.2;
 const ZOOM_STEP = 0.1;
 
 export default function Roadmap({ data }: { data?: JourneyType }) {
+  // Single source of truth
   const [journey, setJourney] = useState<JourneyType>(() =>
     JSON.parse(JSON.stringify(data))
   );
@@ -32,7 +34,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
   const [hoverPath, setHoverPath] = useState<string | null>(null);
 
-  // Layout helpers
+  // ----- Layout helpers
   const levels = useMemo(() => computeLevels(journey.nodes), [journey.nodes]);
   const columns = useMemo(
     () => assignColumns(levels, journey.nodes),
@@ -43,7 +45,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     [journey.nodes]
   );
 
-  // Unlock on mount
+  // ----- Unlock on mount
   useEffect(() => {
     setJourney((prev) => {
       const nodes = prev.nodes.map((n) => ({ ...n }));
@@ -63,7 +65,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
 
   const suggestions = useMemo(() => buildSuggestions(journey), [journey]);
 
-  // Auto positions (grid)
+  // ----- Auto positions (grid)
   const autoPositions = useMemo(() => {
     const pos = new Map<string, Point>();
     const levelCounts: Record<number, number> = {};
@@ -84,7 +86,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     return pos;
   }, [journey.nodes, levels, columns]);
 
-  // Respect manual node.position if present; else use auto
+  // ----- Respect manual node.position if present; else use auto
   const nodePositions = useMemo(() => {
     const pos = new Map<string, Point>();
     for (const n of journey.nodes) {
@@ -101,6 +103,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     return pos;
   }, [journey.nodes, autoPositions]);
 
+  // ----- Bounds for centering
   const minX = Math.min(
     ...Array.from(nodePositions.values()).map((p) => p.x - NODE_WIDTH / 2)
   );
@@ -115,19 +118,54 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const viewH = maxY + 240;
 
   // ---- PAN & ZOOM state
-  const initialPan: Point = { x: -minX + 80, y: 60 };
-  const [pan, setPan] = useState<Point>(initialPan);
-  const [scale, setScale] = useState<number>(1);
+  // initial pan if centering fails for any reason
+  const fallbackPan: Point = { x: -minX + 80, y: 500 };
+  const [pan, setPan] = useState<Point>(fallbackPan);
+  const [scale, setScale] = useState<number>(0.8);
 
+  // ----- Centering helpers
+  const hasUserMoved = useRef(false);
+
+  const centerGraph = (wrapEl: HTMLDivElement | null, atScale: number) => {
+    if (!wrapEl) return null;
+    const rect = wrapEl.getBoundingClientRect();
+    // graph midpoints in graph-space
+    const midX = (minX + maxX) / 2;
+    const midY = maxY / 2;
+    return {
+      x: rect.width / 2 - midX * atScale - 180,
+      y: rect.height / 2 - midY * atScale + 700,
+    };
+  };
+
+  // Recenter on mount/data/resize until user interacts
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    // initial center
+    const next = centerGraph(wrap, scale) || fallbackPan;
+    setPan(next);
+
+    const ro = new ResizeObserver(() => {
+      if (hasUserMoved.current) return;
+      const n = centerGraph(wrapRef.current, scale);
+      if (n) setPan(n);
+    });
+    ro.observe(wrap);
+    return () => ro.disconnect();
+    // Re-run when bounds or scale change
+  }, [minX, maxX, maxY, scale]);
+
+  // Keep pan sane if data changes wildly (safety)
   useEffect(() => {
-    // If data changed a lot, keep a sane pan
     setPan((p) => ({
-      x: isFinite(p.x) ? p.x : initialPan.x,
-      y: isFinite(p.y) ? p.y : initialPan.y,
+      x: isFinite(p.x) ? p.x : fallbackPan.x,
+      y: isFinite(p.y) ? p.y : fallbackPan.y,
     }));
-  }, [initialPan.x, initialPan.y]);
+  }, [fallbackPan.x, fallbackPan.y]);
 
-  // Panning drag state
+  // ----- Panning drag state
   const panState = useRef<{ dragging: boolean; start: Point; panStart: Point }>(
     {
       dragging: false,
@@ -136,36 +174,32 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     }
   );
 
-  // Node dragging state
+  // ----- Node dragging state
   const nodeDrag = useRef<{
     nodeId: string | null;
     startClient: Point;
     nodeStart: Point;
   }>({ nodeId: null, startClient: { x: 0, y: 0 }, nodeStart: { x: 0, y: 0 } });
 
-  // Pinch zoom state
+  // ----- Pinch zoom state (simple, robust approximation)
   const pinch = useRef<{
     active: boolean;
     id1: number | null;
     id2: number | null;
-    startDist: number;
     startScale: number;
-    startPan: Point;
     startMidClient: Point;
   }>({
     active: false,
     id1: null,
     id2: null,
-    startDist: 0,
     startScale: 1,
-    startPan: { x: 0, y: 0 },
     startMidClient: { x: 0, y: 0 },
   });
 
   const primary = journey.theme?.colors?.primary || "#10B981";
   const accent = journey.theme?.colors?.accent || "#F59E0B";
 
-  // Utils
+  // ----- Utils
   const isNodeDraggable = (id: string) => {
     const n = idToNode.get(id);
     return !!(
@@ -175,10 +209,9 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       typeof n.position.y === "number"
     );
   };
-
   const clampScale = (s: number) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, s));
 
-  // Zoom keeping pointer focus stable: we translate pan by (focus - newScaledFocus) delta / scale math
+  // Zoom keeping pointer focus stable
   const zoomAtClientPoint = (
     clientX: number,
     clientY: number,
@@ -197,9 +230,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     const gx = (px - pan.x) / scale;
     const gy = (py - pan.y) / scale;
 
-    // After zoom, we want (gx, gy) to map back to same screen px/py:
-    // px = pan'.x + gx * nextScale  =>  pan'.x = px - gx*nextScale
-    // py = pan'.y + gy * nextScale  =>  pan'.y = py - gy*nextScale
+    // After zoom, keep same screen focus
     const nextPan = {
       x: px - gx * nextScale,
       y: py - gy * nextScale,
@@ -209,15 +240,14 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     setPan(nextPan);
   };
 
-  // ----- Pointer handlers (canvas pan / pinch)
+  // ====== Canvas pan / pinch handlers ======
   const onCanvasPointerDown = (e: React.PointerEvent) => {
-    // handle multi-touch (pinch)
-    // Store pointers in element; React doesn't give full pointers map, so we derive from events
+    hasUserMoved.current = true;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 
-    if (pinch.current.active) return; // already pinching
+    if (pinch.current.active) return;
 
-    // If second finger down -> start pinch
+    // second touch => pinch start
     if (
       pinch.current.id1 !== null &&
       pinch.current.id2 === null &&
@@ -226,13 +256,11 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       pinch.current.id2 = e.pointerId;
       pinch.current.active = true;
       pinch.current.startScale = scale;
-      pinch.current.startPan = { ...pan };
       pinch.current.startMidClient = { x: e.clientX, y: e.clientY };
-      pinch.current.startDist = 0; // will be set on first move when we know both pointers
       return;
     }
 
-    // First finger or mouse -> start pan
+    // first touch or mouse => start pan
     if (e.pointerType !== "touch" || pinch.current.id1 === null) {
       panState.current.dragging = true;
       panState.current.start = { x: e.clientX, y: e.clientY };
@@ -247,23 +275,15 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   };
 
   const onCanvasPointerMove = (e: React.PointerEvent) => {
-    // Pinch (need two active touches)
+    // Pinch (approximate by vertical movement factor around start midpoint)
     if (
       pinch.current.active &&
       pinch.current.id1 !== null &&
       pinch.current.id2 !== null
     ) {
-      // We cannot read the other pointer’s coords directly in React; a lightweight approach:
-      // use the movement on this event combined with startMidClient to estimate current midpoint & distance.
-      // For practical UX, we can read `e` as the "latest" finger and compute scale by wheel fallback:
-      // Simpler & robust: when pinching, use `e` as current midpoint and use `e.width` as heuristic (not reliable).
-      // Better approach: track both pointers via native listeners; to keep it simple here:
-      // We'll use browser’s wheel+ctrl for most trackpads, and for touch we approximate:
-      // If movement since start > 0, derive a delta from vertical move.
       const dy = e.clientY - pinch.current.startMidClient.y;
-      const delta = 1 - dy * 0.002; // small sensitivity
+      const delta = 1 - dy * 0.002; // sensitivity
       const next = clampScale(pinch.current.startScale * delta);
-      // Zoom around start midpoint:
       zoomAtClientPoint(
         pinch.current.startMidClient.x,
         pinch.current.startMidClient.y,
@@ -272,7 +292,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       return;
     }
 
-    // Pan (translate before scale => divide by scale for natural feel)
+    // Pan (divide by scale for natural feel)
     if (panState.current.dragging) {
       const dx = (e.clientX - panState.current.start.x) / scale;
       const dy = (e.clientY - panState.current.start.y) / scale;
@@ -291,7 +311,6 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       panState.current.dragging = false;
       document.body.style.cursor = "";
     }
-    // Clear pinch ids if a touch ends
     if (e.pointerType === "touch") {
       if (pinch.current.id2 === e.pointerId) pinch.current.id2 = null;
       if (pinch.current.id1 === e.pointerId) pinch.current.id1 = null;
@@ -301,10 +320,11 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     }
   };
 
-  // Wheel zoom (ctrl/⌘ + wheel, and trackpad pinch)
+  // Wheel zoom (ctrl/⌘ + wheel and trackpad pinch)
   const onWheel = (e: React.WheelEvent) => {
-    // If ctrlKey is true, it's likely a pinch-zoom gesture on trackpad
+    // trackpad pinch usually sets ctrlKey, otherwise ignore to allow page scroll
     if (e.ctrlKey || e.metaKey) {
+      hasUserMoved.current = true;
       e.preventDefault();
       const direction = e.deltaY > 0 ? 1 : -1;
       const factor = 1 - direction * ZOOM_STEP; // scroll up => zoom in
@@ -312,9 +332,10 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     }
   };
 
-  // ----- Node drag (respects scale)
+  // ====== Node drag (respects scale) ======
   const onNodePointerDown = (nodeId: string) => (e: React.PointerEvent) => {
     if (!isNodeDraggable(nodeId)) return;
+    hasUserMoved.current = true;
     e.stopPropagation();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     const np = nodePositions.get(nodeId)!;
@@ -329,7 +350,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const onNodePointerMove = (e: React.PointerEvent) => {
     if (!nodeDrag.current.nodeId) return;
     e.stopPropagation();
-    const dx = (e.clientX - nodeDrag.current.startClient.x) / scale; // adjust by scale
+    const dx = (e.clientX - nodeDrag.current.startClient.x) / scale;
     const dy = (e.clientY - nodeDrag.current.startClient.y) / scale;
     const id = nodeDrag.current.nodeId;
     const nextX = nodeDrag.current.nodeStart.x + dx;
@@ -355,7 +376,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     document.body.style.cursor = "";
   };
 
-  // Actions
+  // ====== Node actions (progress & percent) ======
   const handleAction = (payload: {
     nodeId: string;
     subId?: string;
@@ -426,12 +447,21 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     });
   };
 
-  // Controls
-  const zoomIn = () => setScale((s) => clampScale(s + ZOOM_STEP));
-  const zoomOut = () => setScale((s) => clampScale(s - ZOOM_STEP));
+  // ====== Controls
+  const zoomIn = () => {
+    hasUserMoved.current = true;
+    setScale((s) => clampScale(s + ZOOM_STEP));
+  };
+  const zoomOut = () => {
+    hasUserMoved.current = true;
+    setScale((s) => clampScale(s - ZOOM_STEP));
+  };
   const resetView = () => {
+    const wrap = wrapRef.current;
+    const nextCenter = centerGraph(wrap, 1) || fallbackPan;
     setScale(1);
-    setPan(initialPan);
+    setPan(nextCenter);
+    hasUserMoved.current = false;
   };
 
   return (
@@ -452,7 +482,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
         >
           −
         </button>
-        <div className="px-1 py-1 w-16 text-center">
+        <div className="w-16 px-1 py-1 text-center">
           {Math.round(scale * 100)}%
         </div>
         <button
@@ -469,7 +499,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
         </button>
       </div>
 
-      {/* Canvas */}
+      {/* Canvas (pan/zoom target) */}
       <div
         ref={wrapRef}
         className="relative h-full overflow-hidden"
@@ -484,11 +514,11 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
         <div
           className="relative"
           style={{
-            width: viewW * scale + 600, // extra room
+            width: viewW * scale + 600, // extra room for edges offscreen
             height: viewH * scale + 400,
           }}
         >
-          {/* Edges */}
+          {/* EDGES */}
           <svg
             width={viewW}
             height={viewH}
@@ -571,7 +601,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
             </g>
           </svg>
 
-          {/* Nodes */}
+          {/* NODES */}
           <div
             className="absolute inset-0 z-10"
             style={{
