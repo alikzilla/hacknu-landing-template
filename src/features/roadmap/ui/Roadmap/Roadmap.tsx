@@ -118,10 +118,9 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const viewH = maxY + 240;
 
   // ---- PAN & ZOOM state
-  // initial pan if centering fails for any reason
-  const fallbackPan: Point = { x: -minX + 80, y: 500 };
+  const fallbackPan: Point = { x: -minX + 80, y: 60 };
   const [pan, setPan] = useState<Point>(fallbackPan);
-  const [scale, setScale] = useState<number>(0.8);
+  const [scale, setScale] = useState<number>(1);
 
   // ----- Centering helpers
   const hasUserMoved = useRef(false);
@@ -133,8 +132,8 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     const midX = (minX + maxX) / 2;
     const midY = maxY / 2;
     return {
-      x: rect.width / 2 - midX * atScale - 180,
-      y: rect.height / 2 - midY * atScale + 700,
+      x: rect.width / 2 - midX * atScale,
+      y: rect.height / 2 - midY * atScale,
     };
   };
 
@@ -154,7 +153,6 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     });
     ro.observe(wrap);
     return () => ro.disconnect();
-    // Re-run when bounds or scale change
   }, [minX, maxX, maxY, scale]);
 
   // Keep pan sane if data changes wildly (safety)
@@ -199,6 +197,23 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const primary = journey.theme?.colors?.primary || "#10B981";
   const accent = journey.theme?.colors?.accent || "#F59E0B";
 
+  // ----- Helpers: interactive element guard
+  const isInteractiveTarget = (el: EventTarget | null): boolean => {
+    if (!(el instanceof HTMLElement)) return false;
+    const tag = el.tagName.toLowerCase();
+    if (
+      tag === "button" ||
+      tag === "a" ||
+      tag === "input" ||
+      tag === "textarea" ||
+      tag === "select"
+    )
+      return true;
+    if (el.getAttribute("role") === "button") return true;
+    if (el.closest("[data-interactive]")) return true; // allow opt-in from NodeCard
+    return false;
+  };
+
   // ----- Utils
   const isNodeDraggable = (id: string) => {
     const n = idToNode.get(id);
@@ -242,13 +257,17 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
 
   // ====== Canvas pan / pinch handlers ======
   const onCanvasPointerDown = (e: React.PointerEvent) => {
-    hasUserMoved.current = true;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    // Do not start pan if the target is interactive
+    if (isInteractiveTarget(e.target)) return;
 
-    if (pinch.current.active) return;
+    hasUserMoved.current = true;
+
+    // Only start pan for primary button/touch
+    const isPrimaryMouse = e.pointerType === "mouse" ? e.button === 0 : true;
 
     // second touch => pinch start
     if (
+      isPrimaryMouse &&
       pinch.current.id1 !== null &&
       pinch.current.id2 === null &&
       e.pointerType === "touch"
@@ -257,15 +276,21 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       pinch.current.active = true;
       pinch.current.startScale = scale;
       pinch.current.startMidClient = { x: e.clientX, y: e.clientY };
+      // capture only for pinch if needed
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       return;
     }
 
     // first touch or mouse => start pan
-    if (e.pointerType !== "touch" || pinch.current.id1 === null) {
+    if (
+      isPrimaryMouse &&
+      (e.pointerType !== "touch" || pinch.current.id1 === null)
+    ) {
       panState.current.dragging = true;
       panState.current.start = { x: e.clientX, y: e.clientY };
       panState.current.panStart = { ...pan };
       document.body.style.cursor = "grabbing";
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     }
 
     // register first touch id
@@ -334,6 +359,8 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
 
   // ====== Node drag (respects scale) ======
   const onNodePointerDown = (nodeId: string) => (e: React.PointerEvent) => {
+    // allow buttons inside NodeCard to work
+    if (isInteractiveTarget(e.target)) return;
     if (!isNodeDraggable(nodeId)) return;
     hasUserMoved.current = true;
     e.stopPropagation();
@@ -376,6 +403,38 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
     document.body.style.cursor = "";
   };
 
+  // ====== Helpers: completion by subnodes (achievements)
+  const completeBySubnodesIfNeeded = (node: any) => {
+    // If node has NO numeric progress, but has subnodes and all are completed => complete
+    if (
+      !node.progress &&
+      Array.isArray(node.subnodes) &&
+      node.subnodes.length
+    ) {
+      const allDone = node.subnodes.every((s: any) => s.status === "completed");
+      if (allDone) {
+        node.status = "completed";
+      }
+    }
+  };
+
+  const recalcOverall = (model: JourneyType) => {
+    const percents: number[] = [];
+    for (const n of model.nodes) {
+      if (typeof n?.progress?.percent === "number") {
+        percents.push(clamp(n.progress.percent, 0, 100));
+      }
+    }
+    const overall =
+      percents.length > 0
+        ? Math.round(percents.reduce((a, b) => a + b, 0) / percents.length)
+        : 0;
+    return {
+      ...model,
+      progress: { ...(model.progress || {}), overall_percent: overall },
+    };
+  };
+
   // ====== Node actions (progress & percent) ======
   const handleAction = (payload: {
     nodeId: string;
@@ -386,18 +445,21 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       const next = { ...prev, nodes: prev.nodes.map((n) => ({ ...n })) };
       const node = next.nodes.find((n) => n.id === payload.nodeId);
       if (!node) return prev;
+      // mark subnode complete (e.g., "собрать все документы")
       if (payload.subId && node.subnodes)
         node.subnodes = node.subnodes.map((s) =>
           s.id === payload.subId ? { ...s, status: "completed" } : s
         );
+
+      // numeric increment (amount in value terms)
       if (
         node.progress &&
         typeof node.progress.current_value === "number" &&
-        typeof node.progress.target_value === "number"
+        typeof node.progress.target_value === "number" &&
+        typeof payload.amount === "number"
       ) {
-        const inc = payload.amount || 0;
         node.progress.current_value = clamp(
-          node.progress.current_value + inc,
+          node.progress.current_value + payload.amount,
           0,
           node.progress.target_value
         );
@@ -409,7 +471,13 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
           100
         );
       }
+
+      // if no numeric progress — auto-complete by subnodes
+      completeBySubnodesIfNeeded(node);
+
       node.status = statusFromProgress(node);
+
+      // unlock / complete neighbors
       const map = new Map(next.nodes.map((x) => [x.id, x] as const));
       for (const n of next.nodes) {
         if ((n.status ?? "locked") === "locked" && canUnlock(n, map)) {
@@ -419,8 +487,11 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
               : "unlocked";
         }
         if ((n.progress?.percent ?? 0) >= 100) n.status = "completed";
+        // subnode-based completion fallback
+        completeBySubnodesIfNeeded(n);
       }
-      return next;
+
+      return recalcOverall(next);
     });
   };
 
@@ -442,8 +513,14 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       node.progress.current_value = Math.round(
         (node.progress.percent / 100) * tgt
       );
+
+      // if percent reached 100 — completed
       node.status = statusFromProgress(node);
-      return next;
+
+      // also check subnode-based completion for nodes without numeric progress (safety)
+      completeBySubnodesIfNeeded(node);
+
+      return recalcOverall(next);
     });
   };
 
@@ -634,6 +711,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
                     onPointerUp={onNodePointerUp}
                     onPointerCancel={onNodePointerUp}
                   >
+                    {/* Tip: add data-interactive on clickable areas within NodeCard to be extra safe */}
                     <NodeCard
                       node={n}
                       onAction={({ amount, subId }) =>
