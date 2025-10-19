@@ -1,9 +1,9 @@
 import { NodeType } from "..";
 
-export const NODE_WIDTH = 280;
+export const NODE_WIDTH = 450;
 export const NODE_HEIGHT = 140;
-export const H_SPACING = 320;
-export const V_SPACING = 180;
+export const H_SPACING = 500;
+export const V_SPACING = 280;
 
 export function priorityScore(p?: NodeType["priority"]) {
   switch (p) {

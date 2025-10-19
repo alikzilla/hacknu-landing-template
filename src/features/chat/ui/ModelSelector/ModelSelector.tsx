@@ -1,11 +1,10 @@
-import { useState } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { CaretDown, Check } from "phosphor-react";
+import { useModelStore } from "../../model";
 
 const ModelSelector = () => {
-  const [apiKeyScope, setApiKeyScope] = useState<
-    "general" | "cumulative" | "accounting"
-  >("general");
+  const activeModel = useModelStore((m) => m.activeModel);
+  const onSelect = useModelStore((m) => m.setActiveModel);
 
   return (
     <DropdownMenu.Root>
@@ -14,11 +13,11 @@ const ModelSelector = () => {
           className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xl font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 data-[state=open]:bg-slate-50"
           aria-label="Открыть меню"
         >
-          {apiKeyScope === "general"
-            ? "Общая модель"
-            : apiKeyScope === "cumulative"
-            ? "Накопительная модель"
-            : "Учетная модель"}
+          {activeModel === "general"
+            ? "Чатбот"
+            : activeModel === "cumulative"
+            ? "Роудмап"
+            : "Аналитика"}
           <CaretDown size={14} />
         </button>
       </DropdownMenu.Trigger>
@@ -34,9 +33,9 @@ const ModelSelector = () => {
           </DropdownMenu.Label>
 
           <DropdownMenu.RadioGroup
-            value={apiKeyScope}
-            onValueChange={(v) =>
-              setApiKeyScope(v as "general" | "cumulative" | "accounting")
+            value={activeModel}
+            onValueChange={(m) =>
+              onSelect(m as "general" | "cumulative" | "accounting")
             }
           >
             <DropdownMenu.RadioItem
@@ -44,9 +43,9 @@ const ModelSelector = () => {
               className="group relative flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-slate-100"
             >
               <span className="pointer-events-none absolute left-2 inline-flex h-4 w-4 items-center justify-center">
-                {apiKeyScope === "general" && <Check size={14} />}
+                {activeModel === "general" && <Check size={14} />}
               </span>
-              <span className="pl-5">Общая модель</span>
+              <span className="pl-5">Чатбот</span>
             </DropdownMenu.RadioItem>
 
             <DropdownMenu.RadioItem
@@ -54,9 +53,9 @@ const ModelSelector = () => {
               className="group relative flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-slate-100"
             >
               <span className="pointer-events-none absolute left-2 inline-flex h-4 w-4 items-center justify-center">
-                {apiKeyScope === "cumulative" && <Check size={14} />}
+                {activeModel === "cumulative" && <Check size={14} />}
               </span>
-              <span className="pl-5">Накопительная модель</span>
+              <span className="pl-5">Роудмап</span>
             </DropdownMenu.RadioItem>
 
             <DropdownMenu.RadioItem
@@ -64,9 +63,9 @@ const ModelSelector = () => {
               className="group relative flex cursor-default select-none items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-[highlighted]:bg-slate-100"
             >
               <span className="pointer-events-none absolute left-2 inline-flex h-4 w-4 items-center justify-center">
-                {apiKeyScope === "accounting" && <Check size={14} />}
+                {activeModel === "accounting" && <Check size={14} />}
               </span>
-              <span className="pl-5">Учетная модель</span>
+              <span className="pl-5">Аналитика</span>
             </DropdownMenu.RadioItem>
           </DropdownMenu.RadioGroup>
 

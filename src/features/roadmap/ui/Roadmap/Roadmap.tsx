@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { sampleBranching, sampleLinear } from "@/pages/Roadmap";
+import { sampleBranching } from "@/pages/Roadmap";
 import {
   calcPath,
   clamp,
@@ -89,6 +89,13 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
   const viewW = maxX - minX + 160;
   const viewH = maxY + 240;
 
+  const offsetX = -minX + 80; // left padding so graph starts on-screen
+  const offsetY = 60; // top padding
+  const GUTTER = 160; // extra scroll space around the graph
+
+  const contentW = viewW + offsetX + GUTTER;
+  const contentH = viewH + offsetY + GUTTER;
+
   // Actions
   const handleAction = (payload: {
     nodeId: string;
@@ -165,7 +172,7 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
 
   return (
     <div
-      className="h-[100dvh] bg-[var(--canvas-bg)]"
+      className="h-full w-full bg-[var(--canvas-bg)] overflow-hidden"
       style={{
         background: `radial-gradient( circle at 20% 10%, rgba(16,185,129,0.06), transparent 50%), radial-gradient( circle at 80% 50%, rgba(245,158,11,0.06), transparent 50%), ${
           journey.theme?.colors?.bg || "#F8FAFC"
@@ -173,159 +180,123 @@ export default function Roadmap({ data }: { data?: JourneyType }) {
       }}
     >
       {/* Canvas */}
-      <div className="relative overflow-auto">
-        <div className="relative mx-auto max-w-[1100px] px-8 py-10">
-          {/* Layered canvas: edges behind (z-0), nodes above (z-10) */}
-          <div
-            className="relative mx-auto"
-            style={{ width: viewW, height: viewH }}
-          >
-            {/* EDGES (z-0) */}
-            <svg width={viewW} height={viewH} className="absolute inset-0 z-0">
-              <defs>
-                <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor={primary} stopOpacity="0.2" />
-                  <stop offset="100%" stopColor={accent} stopOpacity="0.6" />
-                </linearGradient>
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-              <g transform={`translate(${-minX + 80}, 60)`}>
-                {(journey.connections || []).map((c) => {
-                  const s = nodePositions.get(c.from);
-                  const t = nodePositions.get(c.to);
-                  if (!s || !t) return null;
-                  const sx = s.x + NODE_WIDTH / 2;
-                  const sy = s.y + NODE_HEIGHT - 20;
-                  const tx = t.x + NODE_WIDTH / 2;
-                  const ty = t.y + 20;
-                  const d = calcPath(sx, sy, tx, ty);
-                  const fromNode = idToNode.get(c.from);
-                  const unlocked = (fromNode?.status ?? "locked") !== "locked";
-                  const isSelected = selectedPath === c.id;
-                  const isHover = hoverPath === c.id;
-                  return (
-                    <g
-                      key={c.id}
-                      onMouseEnter={() => setHoverPath(c.id)}
-                      onMouseLeave={() =>
-                        setHoverPath((h) => (h === c.id ? null : h))
+      <div className="relative h-full overflow-auto">
+        {/* Layered canvas: edges behind (z-0), nodes above (z-10) */}
+        <div className="relative" style={{ width: contentW, height: contentH }}>
+          {/* EDGES (z-0) */}
+          <svg width={viewW} height={viewH} className="absolute inset-0 z-0">
+            <defs>
+              <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor={primary} stopOpacity="0.2" />
+                <stop offset="100%" stopColor={accent} stopOpacity="0.6" />
+              </linearGradient>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <g transform={`translate(${offsetX}, ${offsetY})`}>
+              {(journey.connections || []).map((c) => {
+                const s = nodePositions.get(c.from);
+                const t = nodePositions.get(c.to);
+                if (!s || !t) return null;
+                const sx = s.x + NODE_WIDTH / 2;
+                const sy = s.y + NODE_HEIGHT - 20;
+                const tx = t.x + NODE_WIDTH / 2;
+                const ty = t.y + 20;
+                const d = calcPath(sx, sy, tx, ty);
+                const fromNode = idToNode.get(c.from);
+                const unlocked = (fromNode?.status ?? "locked") !== "locked";
+                const isSelected = selectedPath === c.id;
+                const isHover = hoverPath === c.id;
+                return (
+                  <g
+                    key={c.id}
+                    onMouseEnter={() => setHoverPath(c.id)}
+                    onMouseLeave={() =>
+                      setHoverPath((h) => (h === c.id ? null : h))
+                    }
+                    onClick={() => setSelectedPath(c.id)}
+                    className="cursor-pointer"
+                  >
+                    <motion.path
+                      d={d}
+                      fill="none"
+                      stroke="url(#edgeGrad)"
+                      strokeWidth={
+                        isSelected ? 6 : isHover ? 5 : unlocked ? 4 : 2
                       }
-                      onClick={() => setSelectedPath(c.id)}
-                      className="cursor-pointer"
-                    >
-                      <motion.path
-                        d={d}
-                        fill="none"
-                        stroke="url(#edgeGrad)"
-                        strokeWidth={
-                          isSelected ? 6 : isHover ? 5 : unlocked ? 4 : 2
-                        }
-                        strokeDasharray={unlocked ? "" : "6 6"}
-                        filter={isSelected ? "url(#glow)" : undefined}
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1.0, ease: "easeInOut" }}
-                      />
-                      <motion.circle
-                        r={isSelected ? 5 : 4}
-                        fill={unlocked ? primary : "#94a3b8"}
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{
-                          duration: 1.2,
-                          repeat: Infinity,
-                          repeatType: "reverse",
-                        }}
-                      >
-                        <animateMotion
-                          dur="3s"
-                          repeatCount="indefinite"
-                          path={d}
-                        />
-                      </motion.circle>
-                    </g>
-                  );
-                })}
-              </g>
-            </svg>
-
-            {/* NODES (z-10) */}
-            <div
-              className="absolute inset-0 z-10"
-              style={{
-                transform: `translateX(${-minX + 80}px) translateY(60px)`,
-              }}
-            >
-              <AnimatePresence>
-                {journey.nodes.map((n) => {
-                  const p = nodePositions.get(n.id)!;
-                  const highlight = suggestions.chosen_node_id === n.id;
-                  return (
-                    <motion.div
-                      key={n.id}
-                      className="absolute"
-                      style={{ left: p.x, top: p.y, width: NODE_WIDTH }}
-                      initial={{ opacity: 0, y: 20, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      strokeDasharray={unlocked ? "" : "6 6"}
+                      filter={isSelected ? "url(#glow)" : undefined}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 1.0, ease: "easeInOut" }}
+                    />
+                    <motion.circle
+                      r={isSelected ? 5 : 4}
+                      fill={unlocked ? primary : "#94a3b8"}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
                       transition={{
-                        type: "spring",
-                        stiffness: 140,
-                        damping: 18,
+                        duration: 1.2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
                       }}
                     >
-                      <NodeCard
-                        node={n}
-                        onAction={({ amount, subId }) =>
-                          handleAction({ nodeId: n.id, subId, amount })
-                        }
-                        onPercent={({ nextPercent }) =>
-                          handlePercent({ nodeId: n.id, nextPercent })
-                        }
-                        highlight={highlight}
+                      <animateMotion
+                        dur="3s"
+                        repeatCount="indefinite"
+                        path={d}
                       />
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            </div>
+                    </motion.circle>
+                  </g>
+                );
+              })}
+            </g>
+          </svg>
+
+          {/* NODES (z-10) */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{ transform: `translate(${offsetX}px, ${offsetY}px)` }}
+          >
+            <AnimatePresence>
+              {journey.nodes.map((n) => {
+                const p = nodePositions.get(n.id)!;
+                const highlight = suggestions.chosen_node_id === n.id;
+                return (
+                  <motion.div
+                    key={n.id}
+                    className="absolute"
+                    style={{ left: p.x, top: p.y, width: NODE_WIDTH }}
+                    initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 140,
+                      damping: 18,
+                    }}
+                  >
+                    <NodeCard
+                      node={n}
+                      onAction={({ amount, subId }) =>
+                        handleAction({ nodeId: n.id, subId, amount })
+                      }
+                      onPercent={({ nextPercent }) =>
+                        handlePercent({ nodeId: n.id, nextPercent })
+                      }
+                      highlight={highlight}
+                    />
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// ----------------------------------- Dev Harness (manual tests) -----------------------------------
-export function DevHarness() {
-  const [which, setWhich] = useState<"linear" | "branch">("branch");
-  const data = which === "branch" ? sampleBranching : sampleLinear;
-  return (
-    <div className="h-[100dvh]">
-      <div className="fixed left-3 top-3 z-50 flex gap-2 rounded-xl border bg-white/80 px-3 py-2 text-xs">
-        <button
-          onClick={() => setWhich("branch")}
-          className={`rounded px-2 py-1 ${
-            which === "branch" ? "bg-emerald-100" : "bg-white"
-          }`}
-        >
-          Branching test
-        </button>
-        <button
-          onClick={() => setWhich("linear")}
-          className={`rounded px-2 py-1 ${
-            which === "linear" ? "bg-emerald-100" : "bg-white"
-          }`}
-        >
-          Linear test
-        </button>
-      </div>
-      <Roadmap data={data} />
     </div>
   );
 }

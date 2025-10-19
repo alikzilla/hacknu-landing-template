@@ -8,13 +8,14 @@ import {
   Trash,
   X,
 } from "phosphor-react";
-import { useFileQueue, FilePreviewType } from "../../model";
+import { useFileQueue, FilePreviewType, useModelStore } from "../../model";
 import { useChatIO } from "../../model/hooks/useChatIo";
 
 export const Composer = () => {
   const [input, setInput] = useState("");
   const taRef = useRef<HTMLTextAreaElement>(null);
 
+  const activeModel = useModelStore((m) => m.activeModel);
   const { files, add, clear, remove, onDrop } = useFileQueue();
   const { send, sending, error } = useChatIO();
 
@@ -84,91 +85,97 @@ export const Composer = () => {
         )}
       </AnimatePresence>
 
-      {/* sticky composer */}
-      <div
-        className="sticky bottom-0 border-t border-slate-200/80 bg-white"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
-      >
+      {activeModel === "general" ? (
         <div
-          className="mx-auto flex max-w-3xl items-start gap-2 px-3 md:px-4 py-2.5 md:py-3"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={onDrop}
+          className="sticky bottom-0 border-t border-slate-200/80 bg-white"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
         >
-          {/* attach */}
-          <label
-            className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-[0.98] ${
-              sending ? "opacity-50 pointer-events-none" : ""
-            }`}
+          <div
+            className="mx-auto flex max-w-3xl items-start gap-2 px-3 md:px-4 py-2.5 md:py-3"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={onDrop}
           >
-            <Paperclip size={18} />
-            <input
-              type="file"
-              className="hidden"
-              multiple
-              onChange={handlePick}
-            />
-          </label>
+            {/* attach */}
+            <label
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-[0.98] ${
+                sending ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
+              <Paperclip size={18} />
+              <input
+                type="file"
+                className="hidden"
+                multiple
+                onChange={handlePick}
+              />
+            </label>
 
-          {/* input */}
-          <div className="relative flex-1 flex items-center gap-2">
-            <textarea
-              ref={taRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={1}
-              disabled={sending}
-              placeholder={sending ? "Отправка…" : "Напишите сообщение…"}
-              className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 md:px-4 py-2 pr-24 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-500 text-[15px] disabled:opacity-70"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  doSend();
-                }
-              }}
-            />
+            {/* input */}
+            <div className="relative flex-1 flex items-center gap-2">
+              <textarea
+                ref={taRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                rows={1}
+                disabled={sending}
+                placeholder={sending ? "Отправка…" : "Напишите сообщение…"}
+                className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 md:px-4 py-2 pr-24 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-500 text-[15px] disabled:opacity-70"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    doSend();
+                  }
+                }}
+              />
 
-            {/* right actions */}
-            <div className="pointer-events-auto flex items-center gap-1.5 md:gap-2">
-              <button
-                disabled={sending}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50"
-                title="Голосовой ввод"
-              >
-                <Microphone size={16} />
-              </button>
-              <button
-                onClick={doSend}
-                disabled={sending}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50"
-                title="Отправить"
-              >
-                {sending ? (
-                  <LoaderDots small />
-                ) : (
-                  <PaperPlaneTilt size={16} weight="bold" />
-                )}
-              </button>
+              {/* right actions */}
+              <div className="pointer-events-auto flex items-center gap-1.5 md:gap-2">
+                <button
+                  disabled={sending}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50"
+                  title="Голосовой ввод"
+                >
+                  <Microphone size={16} />
+                </button>
+                <button
+                  onClick={doSend}
+                  disabled={sending}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50"
+                  title="Отправить"
+                >
+                  {sending ? (
+                    <LoaderDots small />
+                  ) : (
+                    <PaperPlaneTilt size={16} weight="bold" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* helper row */}
-        <div className="mx-auto max-w-3xl px-3 md:px-4 pb-2 text-[11px] text-slate-500">
-          {error ? (
-            <span className="text-red-600">
-              Ошибка: {error}.{" "}
-              <button onClick={doSend} className="underline">
-                Повторить
-              </button>
-            </span>
-          ) : (
-            <>
-              Не присылайте конфиденциальные данные. Халяль-подход: без рибы,
-              прозрачно и этично.
-            </>
-          )}
+          {/* helper row */}
+          <div className="mx-auto max-w-3xl px-3 md:px-4 pb-2 text-[11px] text-slate-500">
+            {error ? (
+              <span className="text-red-600">
+                Ошибка: {error}.{" "}
+                <button onClick={doSend} className="underline">
+                  Повторить
+                </button>
+              </span>
+            ) : (
+              <>
+                Не присылайте конфиденциальные данные. Халяль-подход: без рибы,
+                прозрачно и этично.
+              </>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div
+          className="sticky bottom-0 border-t border-slate-200/80 bg-white"
+          style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
+        ></div>
+      )}
     </>
   );
 };
@@ -185,4 +192,58 @@ function LoaderDots({ small }: { small?: boolean }) {
       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-white" />
     </div>
   );
+}
+
+{
+  /* <div
+  className="mx-auto flex max-w-3xl items-start gap-2 px-3 md:px-4 py-2.5 md:py-3"
+  onDragOver={(e) => e.preventDefault()}
+  onDrop={onDrop}
+>
+  <div className="relative flex-1 flex items-center gap-2">
+    <textarea
+      ref={taRef}
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      rows={1}
+      disabled={sending}
+      placeholder={sending ? "Отправка…" : "Напишите сообщение…"}
+      className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-3 md:px-4 py-2 pr-24 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-500 text-[15px] disabled:opacity-70"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          doSend();
+        }
+      }}
+    />
+
+    <div className="w-[170px] pointer-events-auto flex items-center gap-1.5 md:gap-2">
+      <button
+        onClick={doSend}
+        disabled={sending}
+        className="flex h-10 w-full items-center justify-center rounded-full bg-emerald-600 text-xs text-white shadow-sm hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50"
+        title="Создать роудмеп"
+      >
+        {sending ? <LoaderDots small /> : <p>Создать роудмеп</p>}
+      </button>
+    </div>
+  </div>
+</div>;
+
+
+<div className="mx-auto max-w-3xl px-3 md:px-4 pb-2 text-[11px] text-slate-500">
+  {error ? (
+    <span className="text-red-600">
+      Ошибка: {error}.{" "}
+      <button onClick={doSend} className="underline">
+        Повторить
+      </button>
+    </span>
+  ) : (
+    <>
+      Не присылайте конфиденциальные данные. Халяль-подход: без рибы, прозрачно
+      и этично.
+    </>
+  )}
+</div>; */
 }

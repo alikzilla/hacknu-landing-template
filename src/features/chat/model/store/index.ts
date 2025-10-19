@@ -1,4 +1,5 @@
 import { useMessageStore } from "./useMessageStore";
 import { useThreadStore } from "./useThreadStore";
+import { useModelStore } from "./useModelStore";
 
-export { useMessageStore, useThreadStore };
+export { useMessageStore, useThreadStore, useModelStore };

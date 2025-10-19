@@ -1,15 +1,20 @@
 // src/features/chat/ui/Messages/Messages.tsx
 import { useEffect, useRef } from "react";
-import { useMessageStore, useThreadStore, MessageType } from "../../model";
+import {
+  useMessageStore,
+  useThreadStore,
+  MessageType,
+  useModelStore,
+} from "../../model";
 import { EMPTY_MESSAGES } from "../../model/constants/contants";
 import { useChatHistoryLoader } from "../../model/hooks/useChatIo";
+import { Loader } from "lucide-react";
+import Roadmap from "@/pages/Roadmap";
 
 const Bubble = ({ m }: { m: MessageType }) => {
   const isUser = m.role === "user";
   const isTyping = !!m.typing;
   const isPending = !!m.pending;
-
-  console.log(m);
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
@@ -78,8 +83,9 @@ export const Messages = () => {
   const list = useMessageStore((s) =>
     activeId ? s.byThread[activeId] ?? EMPTY_MESSAGES : EMPTY_MESSAGES
   );
+  const activeModel = useModelStore((m) => m.activeModel);
 
-  const { load } = useChatHistoryLoader();
+  const { load, loading } = useChatHistoryLoader();
 
   useEffect(() => {
     load();
@@ -93,20 +99,38 @@ export const Messages = () => {
   });
 
   return (
-    <div
-      ref={ref}
-      className="flex-1 min-h-0 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white px-3 md:px-4 py-3 md:py-4"
-    >
-      <div className="mx-auto max-w-3xl space-y-2.5 md:space-y-3">
-        {list.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white p-5 md:p-8 text-center text-slate-500">
-            Начните диалог: опишите цель (например, «Квартира 70 млн ₸, доход
-            500к»), прикрепите документы или продиктуйте голосом.
+    <>
+      {activeModel === "general" ? (
+        <div
+          ref={ref}
+          className="flex-1 min-h-0 overflow-y-auto bg-gradient-to-b from-slate-50/60 to-white px-3 md:px-4 py-3 md:py-4"
+        >
+          <div className="mx-auto max-w-3xl space-y-2.5 md:space-y-3">
+            {loading ? (
+              <div className="w-full h-full flex items-center justify-center animate-spin">
+                <Loader />
+              </div>
+            ) : list.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-slate-300 bg-white p-5 md:p-8 text-center text-slate-500">
+                Начните диалог: опишите цель (например, «Квартира 70 млн ₸,
+                доход 500к»), прикрепите документы или продиктуйте голосом.
+              </div>
+            ) : (
+              list.map((m) => <Bubble key={m.id} m={m} />)
+            )}
           </div>
-        ) : (
-          list.map((m) => <Bubble key={m.id} m={m} />)
-        )}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 overflow-y-scroll bg-gradient-to-b from-slate-50/60 to-white">
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <Roadmap />
+          )}
+        </div>
+      )}
+    </>
   );
 };
