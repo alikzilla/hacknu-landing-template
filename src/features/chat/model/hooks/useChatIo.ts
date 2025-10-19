@@ -108,10 +108,9 @@ export function useChatIO() {
         // Option A: re-fetch the whole thread (robust if server composes messages)
         const res = await ChatService.getChat(activeId);
 
-        console.log(res);
-
         const msgs = (res.data.messages ?? []).map(dtoToMsg);
-        setForThread(activeId, msgs);
+
+        setForThread(activeId, msgs.slice(2, msgs.length));
 
         // Option B (if sendPrompt returns assistant text): replace typing with that text
         // updateById(activeId, typingId, { text: serverText, typing: false });
