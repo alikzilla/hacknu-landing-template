@@ -10,6 +10,7 @@ import { EMPTY_MESSAGES } from "../../model/constants/contants";
 import { useChatHistoryLoader } from "../../model/hooks/useChatIo";
 import { Loader } from "lucide-react";
 import Roadmap from "@/pages/Roadmap";
+import AnalyticsPage from "@/pages/Analytics";
 
 const Bubble = ({ m }: { m: MessageType }) => {
   const isUser = m.role === "user";
@@ -120,7 +121,7 @@ export const Messages = () => {
             )}
           </div>
         </div>
-      ) : (
+      ) : activeModel === "cumulative" ? (
         <div className="flex-1 min-h-0 overflow-y-scroll bg-gradient-to-b from-slate-50/60 to-white">
           {loading ? (
             <div className="w-full h-full flex items-center justify-center">
@@ -128,6 +129,16 @@ export const Messages = () => {
             </div>
           ) : (
             <Roadmap />
+          )}
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0 overflow-y-scroll bg-gradient-to-b from-slate-50/60 to-white">
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <AnalyticsPage />
           )}
         </div>
       )}
